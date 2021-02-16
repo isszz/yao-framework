@@ -72,6 +72,8 @@ class App extends Container
      */
     public function run()
     {
+        set_time_limit(30);
+        @ini_set('memory_limit', '64M');
         $this['event']->trigger('app_start');
 //        ignore_user_abort(true);
         ob_start();
