@@ -50,7 +50,7 @@ class Container implements ContainerInterface, \ArrayAccess
      */
     public function set(string $abstract, object $instance): void
     {
-//        $abstract = $this->_getBindClass($abstract);
+        $abstract = $this->_getBindClass($abstract);
         static::$instances[$abstract] = $instance;
     }
 
@@ -65,7 +65,7 @@ class Container implements ContainerInterface, \ArrayAccess
         if ($this->has($abstract)) {
             return static::$instances[$abstract];
         }
-        throw new ContainerException("'{$abstract}'还没有实例化！");
+        throw new ContainerException('No instance found: ' . $abstract);
     }
 
     /**
@@ -150,6 +150,12 @@ class Container implements ContainerInterface, \ArrayAccess
      * @return object
      * @throws \ReflectionException
      */
+    /**
+     * @param string $abstract
+     * @param array $arguments
+     * @return object
+     * @throws \ReflectionException
+     */
     private function _inject(string $abstract, array $arguments): object
     {
         $reflectionClass = new \ReflectionClass($abstract);
@@ -158,9 +164,10 @@ class Container implements ContainerInterface, \ArrayAccess
         }
         if ($constructor->isPublic()) {
             $parameters = $constructor->getParameters();
-            $injectClass = $this->_getInjectObject($parameters);
-            return new $abstract(...[...$arguments, ...$injectClass]);
+            $injectClass = $this->_getInjectObject($parameters, $arguments);
+            return new $abstract(...$injectClass);
         }
+        throw new ContainerException('Cannot initialize class: ' . $abstract);
     }
 
 
@@ -181,8 +188,8 @@ class Container implements ContainerInterface, \ArrayAccess
         [$abstract, $method] = [$this->_getBindClass($callable[0]), $callable[1]];
         $instance = $this->make($abstract, $constructorParameters, $singleInstance);
         $parameters = (new \ReflectionClass($abstract))->getMethod($method)->getParameters();
-        $injectClass = $this->_getInjectObject($parameters);
-        return call_user_func_array([$instance, $method], [...$arguments, ...$injectClass]);
+        $injectClass = $this->_getInjectObject($parameters, $arguments);
+        return call_user_func_array([$instance, $method], $injectClass);
     }
 
 
@@ -191,13 +198,19 @@ class Container implements ContainerInterface, \ArrayAccess
      * @param $parameters
      * @return array
      */
-    protected function _getInjectObject(array $parameters): array
+    protected function _getInjectObject(array $parameters, array $arguments): array
     {
-        //此处有bug，所有注入的类都成了单例的了
+        //[DEBUG]所有注入的类都成了单例的了
         $injectClass = [];
         foreach ($parameters as $parameter) {
             if (!is_null($class = $parameter->getClass())) {
                 $injectClass[] = $this->make($class->getName(), [], true);
+            } else {
+                if (!empty($arguments)) {
+                    if (!empty($arg = array_shift($arguments))) {
+                        $injectClass[] = $arg;
+                    }
+                }
             }
         }
         return $injectClass;
