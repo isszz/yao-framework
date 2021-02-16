@@ -2,18 +2,15 @@
 
 namespace Yao\Event;
 
-use Yao\Event\Events\Start;
-use Yao\Event\Events\Statistics;
+use Yao\Facade\Config;
 
 class Event
 {
 
     protected array $events = [
         'app_start' => [
-            Start::class
         ],
         'response_sent' => [
-            Statistics::class
         ],
         'view_rendered' => [
 
@@ -41,7 +38,8 @@ class Event
 
     public function trigger($trigger)
     {
-        foreach ($this->get($trigger) as $event) {
+        $triggers = array_merge($this->get($trigger), Config::get('app.events.' . $trigger,[]));
+        foreach ($triggers as $event) {
             (new $event)->trigger();
         }
     }
