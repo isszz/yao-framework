@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Yao;
+namespace Yao\Facade;
 
 /**
  * 门面实现基类
@@ -37,7 +37,7 @@ class Facade
      */
     protected static function createFacade()
     {
-        return App::instance()
+        return \Yao\App::instance()
             ->make(static::getFacadeClass(), [], static::$singleInstance);
     }
 
@@ -50,9 +50,9 @@ class Facade
     public static function __callStatic($method, $params)
     {
         if (static::$methodInjection) {
-            return App::instance()
+            return \Yao\App::instance()
                 ->invokeMethod([static::getFacadeClass(), $method], $params, static::$singleInstance);
         }
-        return call_user_func_array([static::createFacade(), $method], $params);
+        return static::createFacade()->$method(...$params);
     }
 }
