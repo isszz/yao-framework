@@ -9,18 +9,24 @@ use Monolog\Handler\StreamHandler;
 class Log
 {
 
+    /**
+     * Config实例
+     * @var Config
+     */
+    protected Config $config;
+
     private $logFile = '';
     private $logName = 'system';
     private Logger $monolog;
 
-    public function __construct()
+    public function __construct(Config $config)
     {
-
+        $this->config = $config;
     }
 
     public function write($logName, $message, $level = 'warning', array $context = [])
     {
-        if (false == \Yao\Facade\Config::get('app.log')) {
+        if (false == $this->config->get('app.log')) {
             return;
         }
         $logLevel = constant(Logger::class . '::' . strtoupper($level));
