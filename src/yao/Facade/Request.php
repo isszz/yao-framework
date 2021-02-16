@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Yao\Facade;
-
 
 /**
  * @method static bool isMethod(string $method) 请求方式判断
@@ -21,7 +19,7 @@ namespace Yao\Facade;
  * Class Request
  * @package Yao\Facade
  */
-class Request extends \Yao\Facade
+class Request extends Facade
 {
     protected static $singleInstance = true;
 

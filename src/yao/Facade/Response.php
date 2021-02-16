@@ -8,7 +8,7 @@ namespace Yao\Facade;
  * Class Config
  * @package Yao\Facade
  */
-class Response extends \Yao\Facade
+class Response extends Facade
 {
 
     protected static $singleInstance = true;

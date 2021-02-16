@@ -1,10 +1,6 @@
 <?php
 
-
 namespace Yao\Facade;
-
-
-use Yao\Facade;
 
 /**
  * @method static get(string $class_name) 获取实例化后的对象

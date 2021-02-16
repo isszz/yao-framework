@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yao\Facade;
 
 /**
@@ -9,7 +8,7 @@ namespace Yao\Facade;
  * Class Env
  * @package Yao\Facade
  */
-class Env extends \Yao\Facade
+class Env extends Facade
 {
 
     protected static $singleInstance = true;

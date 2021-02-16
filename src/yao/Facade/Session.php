@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yao\Facade;
 
 /**
@@ -10,7 +9,7 @@ namespace Yao\Facade;
  * Class Session
  * @package Yao\Facade
  */
-class Session extends \Yao\Facade
+class Session extends Facade
 {
     protected static $singleInstance = true;
 

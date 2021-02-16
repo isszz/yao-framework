@@ -2,8 +2,6 @@
 
 namespace Yao\Facade;
 
-use Yao\Facade;
-
 class Cache extends Facade
 {
 

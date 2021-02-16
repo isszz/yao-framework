@@ -7,7 +7,7 @@ namespace Yao\Facade;
  * Class View
  * @package Yao\Facade
  */
-class View extends \Yao\Facade
+class View extends Facade
 {
     protected static $singleInstance = true;
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Yao\Facade;
-
 
 /**
  * @method static \Yao\Http\Route get(string $uri, mixed $location) GET方式请求的路由
@@ -20,7 +18,7 @@ namespace Yao\Facade;
  * Class Route
  * @package \Yao\Facade
  */
-class Route extends \Yao\Facade
+class Route extends Facade
 {
 
     protected static $singleInstance = true;

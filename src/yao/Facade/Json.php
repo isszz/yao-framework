@@ -7,7 +7,7 @@ namespace Yao\Facade;
  * @package Yao\Facade
  * @method static \Yao\Http\Response\Json data($data)
  */
-class Json extends \Yao\Facade
+class Json extends Facade
 {
     protected static function getFacadeClass()
     {

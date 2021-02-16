@@ -1,9 +1,6 @@
 <?php
 
-
 namespace Yao\Facade;
-
-use Yao\Facade;
 
 /**
  * Class Db
