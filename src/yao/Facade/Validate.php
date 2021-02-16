@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yao\Facade;
 
 /**
@@ -10,7 +9,7 @@ namespace Yao\Facade;
  * Class Validate
  * @package Yao\Facade
  */
-class Validate extends \Yao\Facade
+class Validate extends Facade
 {
 
     protected static function getFacadeClass()
