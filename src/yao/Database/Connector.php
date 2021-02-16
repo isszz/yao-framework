@@ -2,13 +2,9 @@
 
 namespace Yao\Database;
 
-use Yao\{
-    Traits\SingleInstance
-};
 
 class Connector
 {
-    use SingleInstance;
 
     const FETCHTYPE = \PDO::FETCH_ASSOC;
 
@@ -18,20 +14,16 @@ class Connector
 
     private \PDO $pdo;
 
-    public static function instance($dsn, $config)
-    {
-        if (!static::$instance instanceof static) {
-            static::$instance = new static($dsn, $config);
-        }
-        return static::$instance;
-    }
-
-    public function getPdo()
+    /**
+     * 获取pdo实例
+     * @return \PDO
+     */
+    public function get()
     {
         return $this->pdo;
     }
 
-    private function __construct($dsn, $config)
+    public function __construct($dsn, $config)
     {
         $this->_connect($dsn, $config);
     }
