@@ -72,7 +72,7 @@ class App extends Container
      */
     public function run()
     {
-        \Yao\Facade\Event::trigger('app_start');
+        $this['event']->trigger('app_start');
 //        ignore_user_abort(true);
         ob_start();
         if ($this['config']->get('app.auto_start')) {

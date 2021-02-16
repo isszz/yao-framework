@@ -3,7 +3,6 @@
 namespace Yao\Http;
 
 use Yao\App;
-use Yao\Facade\Event;
 
 /**
  * 响应类
@@ -126,7 +125,7 @@ class Response
 
     public function __destruct()
     {
-        Event::trigger('response_sent');
+        $this->app->event->trigger('response_sent');
     }
 
 }
