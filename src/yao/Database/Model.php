@@ -20,15 +20,15 @@ class Model
 
     /**
      * 表名
-     * @var string|null
+     * @var $name string|null
      */
-    public ?string $name = null;
+    protected ?string $name = null;
 
     /**
      * 默认主键
-     * @var string
+     * @var $key string
      */
-    public $key = 'id';
+    protected string $key = 'id';
 
     /**
      * 初始化表名
