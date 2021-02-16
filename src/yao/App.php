@@ -5,7 +5,6 @@ namespace Yao;
 
 use App\Http\Validate;
 use Yao\Http\{Middleware, Request, Response, Route, Route\Alias, Session};
-use Yao\Provider\Provider;
 use Yao\View\Render;
 
 defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARATOR);
@@ -21,7 +20,6 @@ defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARA
  * @property Session $session
  * @property Log $log
  * @property Alias $alias
- * @property Provider $provider
  * @property Middleware $middleware
  * Class App
  * @package Yao
@@ -42,7 +40,6 @@ class App extends Container
         'view' => Render::class,
         'route' => Route::class,
         'error' => Error::class,
-        'provider' => Provider::class,
         'response' => Response::class,
         'session' => Session::class,
         'log' => Log::class,
@@ -93,7 +90,6 @@ class App extends Container
         $this->bind = array_merge((array)$this->config->get('app.alias'), $this->bind);
         $this['route']->register();
         $this->route->match();
-//        $this['provider']->serve();
         $this->route->dispatch();
     }
 
