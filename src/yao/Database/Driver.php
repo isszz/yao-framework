@@ -3,7 +3,7 @@
 
 namespace Yao\Database;
 
-use Yao\Config;
+use Yao\App;
 
 /**
  * 数据库驱动基类
@@ -30,13 +30,14 @@ abstract class Driver
 
     protected ?array $config = null;
 
-    final public function __construct($database, Config $config)
+    final public function __construct(App $app, $database)
     {
-        $this->config = $config->get('database.' . $database);
+        $this->config = $app->config->get('database.' . $database);
         if (empty($this->config)) {
             throw new \Exception('没有找到数据库配置文件');
         }
-        $this->query = Connector::instance($this->dsn(), $this->config);
+
+        $this->query = $app->make(Connector::class, [$this->dsn(), $this->config]);
         $this->collection = new Collection();
     }
 
