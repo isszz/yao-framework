@@ -132,11 +132,12 @@ class Request
 
     /**
      * 获取请求的url
+     * @param bool|null $full
      * @return string
      */
-    public function url(): string
+    public function url(?bool $full = null): string
     {
-        return $this->server('REQUEST_SCHEME') . '://' . $this->server('HTTP_HOST') . '/';
+        return $this->server('REQUEST_SCHEME') . '://' . $this->server('HTTP_HOST') . ($full ? $this->server('REQUEST_URI') : '/');
     }
 
     /**
