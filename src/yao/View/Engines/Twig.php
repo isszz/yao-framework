@@ -1,12 +1,12 @@
 <?php
 
-namespace Yao\View\Drivers;
+namespace Yao\View\Engines;
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Yao\View\Driver;
+use Yao\View\Engine;
 
-class Twig extends Driver
+class Twig extends Engine
 {
 
     /**

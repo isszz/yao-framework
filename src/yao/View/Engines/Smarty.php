@@ -1,10 +1,10 @@
 <?php
 
-namespace Yao\View\Drivers;
+namespace Yao\View\Engines;
 
-use Yao\View\Driver;
+use Yao\View\Engine;
 
-class Smarty extends Driver
+class Smarty extends Engine
 {
 
     /**

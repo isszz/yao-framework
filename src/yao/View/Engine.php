@@ -9,7 +9,7 @@ use Yao\Config;
  * Class Driver
  * @package Yao\View
  */
-abstract class Driver
+abstract class Engine
 {
 
     /**

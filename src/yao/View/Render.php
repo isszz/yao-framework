@@ -28,7 +28,7 @@ class Render
     {
         $this->app = $app;
         if (!class_exists($this->driver = $app->config->get('view.type'))) {
-            $this->driver = 'Yao\\View\\Drivers\\' . ucfirst($this->driver);
+            $this->driver = 'Yao\\View\\Engines\\' . ucfirst($this->driver);
         }
     }
 
