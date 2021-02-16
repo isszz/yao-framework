@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Yao;
 
-use Yao\Traits\Parse;
+use Yao\Concerns\Parse;
 
 /**
  * 配置文件加载和获取

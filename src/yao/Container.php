@@ -5,7 +5,7 @@ namespace Yao;
 
 use Psr\Container\ContainerInterface;
 use Yao\Exception\ContainerException;
-use Yao\Traits\SingleInstance;
+use Yao\Concerns\SingleInstance;
 
 /**
  * 一个简单的容器类

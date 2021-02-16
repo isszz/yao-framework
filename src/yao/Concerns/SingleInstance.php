@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Yao\Traits;
+namespace Yao\Concerns;
 
 /**
  * 单例Trait
  * Trait SingleInstance
- * @package Yao\Traits
+ * @package Yao\Concerns
  */
 trait SingleInstance
 {

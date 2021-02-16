@@ -5,7 +5,7 @@ namespace Yao\Http;
 
 class Session
 {
-    use \Yao\Traits\Parse;
+    use \Yao\Concerns\Parse;
 
     /**
      * 初始化session

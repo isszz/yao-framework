@@ -11,7 +11,7 @@ namespace Yao;
 class Env
 {
 
-    use \Yao\Traits\Parse;
+    use \Yao\Concerns\Parse;
 
     /**
      * 存放env的数组

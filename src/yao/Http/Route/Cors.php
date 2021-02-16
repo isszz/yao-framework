@@ -7,7 +7,7 @@ use Yao\Facade\Config;
 use Yao\Facade\Request;
 use Yao\Route\Route;
 use Yao\Route\Rule;
-use Yao\Traits\SingleInstance;
+use Yao\Concerns\SingleInstance;
 
 /**
  * 跨域支持类

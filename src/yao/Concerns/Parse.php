@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Yao\Traits;
+namespace Yao\Concerns;
 
 /**
  * 点语法解析Trait
  * Trait Parse
- * @package Yao\Traits
+ * @package Yao\Concerns
  */
 trait Parse
 {
