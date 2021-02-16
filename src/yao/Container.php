@@ -164,7 +164,7 @@ class Container implements ContainerInterface, \ArrayAccess
         }
         if ($constructor->isPublic()) {
             $parameters = $constructor->getParameters();
-            $injectClass = $this->_getInjectObject($parameters, $arguments);
+            $injectClass = $this->_injectArguments($parameters, $arguments);
             return new $abstract(...$injectClass);
         }
         throw new ContainerException('Cannot initialize class: ' . $abstract);
@@ -188,29 +188,24 @@ class Container implements ContainerInterface, \ArrayAccess
         [$abstract, $method] = [$this->_getBindClass($callable[0]), $callable[1]];
         $instance = $this->make($abstract, $constructorParameters, $singleInstance);
         $parameters = (new \ReflectionClass($abstract))->getMethod($method)->getParameters();
-        $injectClass = $this->_getInjectObject($parameters, $arguments);
-        return call_user_func_array([$instance, $method], $injectClass);
+        $injectClass = $this->_injectArguments($parameters, $arguments);
+        return $instance->$method(...$injectClass);
     }
-
 
     /**
      * 通过参数列表获取注入对象数组
      * @param $parameters
      * @return array
      */
-    protected function _getInjectObject(array $parameters, array $arguments): array
+    protected function _injectArguments(array $parameters, array $arguments): array
     {
         //[DEBUG]所有注入的类都成了单例的了
         $injectClass = [];
         foreach ($parameters as $parameter) {
             if (!is_null($class = $parameter->getClass())) {
                 $injectClass[] = $this->make($class->getName(), [], true);
-            } else {
-                if (!empty($arguments)) {
-                    if (!empty($arg = array_shift($arguments))) {
-                        $injectClass[] = $arg;
-                    }
-                }
+            } else if (!empty($arguments) && !empty($arg = array_shift($arguments))) {
+                $injectClass[] = $arg;
             }
         }
         return $injectClass;

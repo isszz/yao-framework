@@ -1,8 +1,14 @@
 {
   "name": "chengyao/framework",
   "description": "Yao框架核心，需要配合框架使用。https://github.com/topyao/yao",
+  "keywords": [
+    "轻量",
+    "PHP框架",
+    "YaoPHP"
+  ],
   "type": "library",
   "license": "Apache-2.0",
+  "homepage": "https://www.chengyao.xyz",
   "authors": [
     {
       "name": "chengyao",
@@ -23,5 +29,8 @@
     "ext-pdo": "*",
     "monolog/monolog": "^2.1",
     "psr/container": "^1.0"
+  },
+  "suggest": {
+    "chengyao/migrate": "数据库迁移工具[开发中]"
   }
 }
