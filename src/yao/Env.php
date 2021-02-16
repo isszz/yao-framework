@@ -76,4 +76,9 @@ class Env
         }
         return $this->parse($this->env, strtoupper($key), $default);
     }
+
+    public function has($key)
+    {
+
+    }
 }

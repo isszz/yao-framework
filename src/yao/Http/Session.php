@@ -37,6 +37,16 @@ class Session
     }
 
     /**
+     * 判断session是否存在
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key)
+    {
+        return isset($_SESSION[$key]);
+    }
+
+    /**
      * session销毁
      */
     public function destroy()
