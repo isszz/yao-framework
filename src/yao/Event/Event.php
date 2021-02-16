@@ -22,13 +22,10 @@ class Event
 
     public function listen($trigger, $event)
     {
-        $this->set($trigger, $event);
-    }
-
-    public function set($trigger, $event)
-    {
         if (!$this->has($trigger, $event)) {
             $this->events[$trigger][] = $event;
+        } else {
+            throw new \Exception('[debug,英语太蹩脚]Event has already listened at ' . $trigger . ' : ' . $event);
         }
     }
 
