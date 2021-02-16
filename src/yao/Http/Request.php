@@ -223,6 +223,11 @@ class Request
         return $this->_request($_POST ?: $this->_raw(), $key, $default);
     }
 
+    public function _raw()
+    {
+        return file_get_contents('php://input');
+    }
+
     /**
      * 获取请求中所有参数
      * @param string|array $key 请求的参数列表
@@ -242,8 +247,8 @@ class Request
      */
     public function put($field = null, $default = null)
     {
-        parse_str(file_get_contents('php://input'), $put);
-        return $this->_request($put, $field, $default);
+        parse_str($this->_raw(), $_PUT);
+        return $this->_request($_PUT, $field, $default);
     }
 
     /**
