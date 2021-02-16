@@ -5,6 +5,7 @@ namespace Yao;
 
 use App\Http\Validate;
 use Yao\Http\{Middleware, Request, Response, Route, Route\Alias, Session};
+use Yao\Event\Event;
 use Yao\View\Render;
 
 defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARATOR);
@@ -20,6 +21,7 @@ defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARA
  * @property Session $session
  * @property Log $log
  * @property Alias $alias
+ * @property Event $event
  * @property Middleware $middleware
  * Class App
  * @package Yao
@@ -43,17 +45,10 @@ class App extends Container
         'response' => Response::class,
         'session' => Session::class,
         'log' => Log::class,
+        'event' => Event::class,
         'alias' => Alias::class,
         'middleware' => Middleware::class
     ];
-
-    /**
-     * App初始化方法
-     */
-    protected function init()
-    {
-
-    }
 
     /**
      * 环境变量设置
@@ -77,8 +72,7 @@ class App extends Container
      */
     public function run()
     {
-        set_time_limit(30);
-        @ini_set('memory_limit', '64M');
+        \Yao\Facade\Event::trigger('app_start');
 //        ignore_user_abort(true);
         ob_start();
         if ($this['config']->get('app.auto_start')) {
