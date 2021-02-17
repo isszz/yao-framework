@@ -66,14 +66,12 @@ class App extends Container
         $this->env->set('CACHE_PATH', ROOT_PATH . 'storage' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR);
     }
 
-    /**
-     * App运行
-     * @throws \Exception
-     */
+
     public function run()
     {
         set_time_limit(30);
-        @ini_set('memory_limit', '64M');
+        function_exists('ini_set') && ini_set('memory_limit', '64M');
+        $this['error']->register();
         $this['event']->trigger('app_start');
 //        ignore_user_abort(true);
         ob_start();
@@ -82,7 +80,6 @@ class App extends Container
             $this['session']->flashCheck();
         }
         date_default_timezone_set($this->config->get('app.default_timezone', 'PRC'));
-        $this['error']->register();
         $this->bind = array_merge((array)$this->config->get('app.alias'), $this->bind);
         $this['route']->register();
         $this->route->match();
