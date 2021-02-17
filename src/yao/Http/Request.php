@@ -46,6 +46,12 @@ class Request
     protected string $action = '';
 
     /**
+     * 额外的数据
+     * @var array
+     */
+    protected array $data = [];
+
+    /**
      * Request constructor.
      * @param App $app
      * @param array|null $filters
@@ -81,11 +87,6 @@ class Request
             return $this->action;
         }
         $this->action = $action;
-    }
-
-    private function _set($attribute, $value)
-    {
-        $this->$attribute = $value;
     }
 
     /**
@@ -319,4 +320,16 @@ class Request
         });
         return $params;
     }
+
+
+    public function __get($key)
+    {
+        return $this->data[$key];
+    }
+
+    public function __set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
 }
