@@ -7,8 +7,6 @@ namespace Yao\Http;
 use Yao\App;
 use Yao\Config;
 use Yao\Exception\RouteNotFoundException;
-use Yao\Http\Request;
-use Yao\Http\Response;
 
 /**
  * 路由操作类
@@ -26,7 +24,7 @@ class Route
 
     /**
      * 请求实例
-     * @var mixed|object|\Yao\Http\Request
+     * @var mixed|object|Request
      */
     protected Request $request;
 
@@ -38,7 +36,7 @@ class Route
 
     /**
      * 响应实例
-     * @var mixed|object|\Yao\Http\Response
+     * @var mixed|object|Response
      */
     protected Response $response;
 
@@ -52,7 +50,7 @@ class Route
      * 当前请求的控制器
      * @var string
      */
-    public string $controller = 'App\\Http\\Controllers';
+    public $controller = 'App\\Http\\Controllers';
 
     /**
      * 当前请求的方法
@@ -172,20 +170,38 @@ class Route
         }
     }
 
+    public function hasRoute($method, $path)
+    {
+        return isset($this->routes[$method][$path]['route']);
+    }
+
+    public function getRoutes($method, $path)
+    {
+        return $this->routes[$method][$path]['route'];
+    }
+
+    public function withMethod($method)
+    {
+        if (!isset($this->routes[$method])) {
+            throw new RouteNotFoundException('Method not allowed: ' . $method);
+        }
+        return (array)$this->routes[$method];
+    }
+
+
     public function match()
     {
         $this->allowCors();
-        if (!array_key_exists($this->request->method(), $this->routes)) {
-            throw new RouteNotFoundException('请求类型' . $this->request->method() . '没有定义任何路由', 404);
-        }
-        if (isset($this->routes[$this->request->method()][$this->request->path()]['route'])) {
-            return $this->_locate($this->routes[$this->request->method()][$this->request->path()]['route']);
+        $method = $this->request->method();
+        $path = $this->request->path();
+        if ($this->hasRoute($method, $path)) {
+            return $this->_locate($this->getRoutes($method, $path));
         } else {
-            foreach ($this->routes[$this->request->method()] as $uri => $location) {
+            foreach ($this->withMethod($method) as $uri => $location) {
                 //设置路由匹配正则
                 $uriRegexp = '#^' . $uri . '$#iU';
                 //路由和请求一致或者匹配到正则
-                if (preg_match($uriRegexp, $this->request->path(), $match)) {
+                if (preg_match($uriRegexp, $path, $match)) {
                     //如果是正则匹配到的uri且有参数传入则将参数传递给成员属性param
                     if (isset($match)) {
                         array_shift($match);
@@ -199,7 +215,7 @@ class Route
             $this->param = $this->routes['none']['data'];
             return $this->_locate($this->routes['none']['route']);
         } else {
-            throw new RouteNotFoundException('页面不存在！', 404);
+            throw new RouteNotFoundException('Page not found: ' . $path, 404);
         }
     }
 
@@ -225,9 +241,6 @@ class Route
             [$this->controller, $this->action] = $location;
         } else if (is_string($location)) {
             $controller = explode('/', $location);
-            if (count($controller) < 2) {
-                throw new \Exception("{$location}中的控制器不存在");
-            }
             $this->action = array_pop($controller);
             foreach ($controller as $directory) {
                 $this->controller .= '\\' . ucfirst($directory);
@@ -247,35 +260,20 @@ class Route
 
     public function dispatch()
     {
-        if (empty($this->controller)) {
-            throw new \Exception('页面不存在！', 404);
-        }
         if ($this->controller instanceof \Closure) {
-            $resData = function () {
-                return call_user_func_array($this->controller, $this->param);
-            };
-            if (isset($this->routes[$this->request->method()][$this->request->path()]['middleware'])) {
-                $middleware = $this->routes[$this->request->method()][$this->request->path()]['middleware'];
-                return (new $middleware)->handle($resData, function ($resData) {
-                    return $this->response->data($resData)->return();
-                });
-            }
+            $response = ($this->controller)($this->param);
         } else if (is_string($this->controller)) {
-            $resData = function () {
+            $response = function () {
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
-            if (isset($this->routes[$this->request->method()][$this->request->path()]['middleware'])) {
-                $middleware = $this->routes[$this->request->method()][$this->request->path()]['middleware'];
-            } else if (isset(get_class_vars($this->controller)['middleware'][$this->action])) {
-                $middleware = get_class_vars($this->controller)['middleware'][$this->action];
-            }
-            if (isset($middleware)) {
-                return (new $middleware)->handle($resData, function ($resData) {
-                    return $this->response->data($resData)->return();
-                });
-            } else {
-                return $this->response->data($resData)->return();
-            }
+        }
+        if (isset($this->routes[$this->request->method()][$this->request->path()]['middleware'])) {
+            $middleware = $this->routes[$this->request->method()][$this->request->path()]['middleware'];
+            return (new $middleware)->handle($response, function ($response) {
+                return $this->response->data($response)->return();
+            });
+        } else {
+            return $this->response->data($response)->return();
         }
     }
 
