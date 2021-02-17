@@ -16,11 +16,9 @@ defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARA
  * @property Env $env
  * @property Config $config
  * @property Render $view
- * @property Route $route
  * @property Response $response
  * @property Session $session
  * @property Log $log
- * @property Alias $alias
  * @property Event $event
  * @property Middleware $middleware
  * Class App

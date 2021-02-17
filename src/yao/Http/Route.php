@@ -170,17 +170,17 @@ class Route
         }
     }
 
-    public function hasRoute($method, $path)
+    private function hasRoute($method, $path)
     {
         return isset($this->routes[$method][$path]['route']);
     }
 
-    public function getRoutes($method, $path)
+    private function getRoutes($method, $path)
     {
         return $this->routes[$method][$path]['route'];
     }
 
-    public function withMethod($method)
+    private function withMethod($method)
     {
         if (!isset($this->routes[$method])) {
             throw new RouteNotFoundException('Method not allowed: ' . $method);
@@ -261,7 +261,7 @@ class Route
     public function dispatch()
     {
         if ($this->controller instanceof \Closure) {
-            $response = ($this->controller)($this->param);
+            $response = ($this->controller)(...$this->param);
         } else if (is_string($this->controller)) {
             $response = function () {
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
