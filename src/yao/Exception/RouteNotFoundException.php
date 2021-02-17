@@ -10,7 +10,8 @@ class RouteNotFoundException extends \RuntimeException
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {
-        $this->message = __CLASS__ . ':' . $message;
+        parent::__construct($message, $code, $previous);
+//        $this->message = __CLASS__ . ':' . $message;
     }
 
 }

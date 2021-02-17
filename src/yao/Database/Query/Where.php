@@ -2,7 +2,15 @@
 
 namespace Yao\Database\Query;
 
-class Where
+trait Where
 {
+    public function whereExists()
+    {
 
+    }
+
+    public function whereOr()
+    {
+
+    }
 }
