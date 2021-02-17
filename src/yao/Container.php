@@ -183,12 +183,12 @@ class Container implements ContainerInterface, \ArrayAccess
      * 给构造方法传递的参数
      * @return mixed
      */
-    public function invokeMethod(array $callable, array $arguments = [], bool $singleInstance = true, array $constructorParameters = [])
+    public function invokeMethod(array $callable, $arguments = [], bool $singleInstance = true, $constructorParameters = [])
     {
         [$abstract, $method] = [$this->_getBindClass($callable[0]), $callable[1]];
-        $instance = $this->make($abstract, $constructorParameters, $singleInstance);
+        $instance = $this->make($abstract, (array)$constructorParameters, $singleInstance);
         $parameters = (new \ReflectionClass($abstract))->getMethod($method)->getParameters();
-        $injectClass = $this->_injectArguments($parameters, $arguments);
+        $injectClass = $this->_injectArguments($parameters, (array)$arguments);
         return $instance->$method(...$injectClass);
     }
 
