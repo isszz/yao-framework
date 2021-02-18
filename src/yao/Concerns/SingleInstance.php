@@ -30,6 +30,6 @@ trait SingleInstance
 
     public function __destruct()
     {
-        self::$instance = null;
+        static::$instance = null;
     }
 }

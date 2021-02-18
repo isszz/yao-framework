@@ -188,37 +188,6 @@ class Route
         return (array)$this->routes[$method];
     }
 
-
-    public function match()
-    {
-        $this->allowCors();
-        $method = $this->request->method();
-        $path = $this->request->path();
-        if ($this->hasRoute($method, $path)) {
-            return $this->_locate($this->getRoutes($method, $path));
-        } else {
-            foreach ($this->withMethod($method) as $uri => $location) {
-                //设置路由匹配正则
-                $uriRegexp = '#^' . $uri . '$#iU';
-                //路由和请求一致或者匹配到正则
-                if (preg_match($uriRegexp, $path, $match)) {
-                    //如果是正则匹配到的uri且有参数传入则将参数传递给成员属性param
-                    if (isset($match)) {
-                        array_shift($match);
-                        $this->param = $match;
-                    }
-                    return $this->_locate($location['route']);
-                }
-            }
-        }
-        if (isset($this->routes['none'])) {
-            $this->param = $this->routes['none']['data'];
-            return $this->_locate($this->routes['none']['route']);
-        } else {
-            throw new RouteNotFoundException('Page not found: ' . $path, 404);
-        }
-    }
-
     /**
      * 视图路由
      * @param string $path
@@ -235,22 +204,6 @@ class Route
         return $this;
     }
 
-    private function _locate($location)
-    {
-        if (is_array($location) && 2 == count($location)) {
-            [$this->controller, $this->action] = $location;
-        } else if (is_string($location)) {
-            $controller = explode('/', $location);
-            $this->action = array_pop($controller);
-            foreach ($controller as $directory) {
-                $this->controller .= '\\' . ucfirst($directory);
-            }
-        } else {
-            $this->controller = $location;
-        }
-        return true;
-    }
-
     public function middleware($middleware)
     {
         $this->app[\Yao\Http\Middleware::class]->set($middleware, $this->method, $this->path);
@@ -260,8 +213,54 @@ class Route
 
     public function dispatch()
     {
+        $this->allowCors();
+        $method = strtolower($this->request->method());
+        $path = $this->request->path();
+        $dispatch = null;
+        if ($this->hasRoute($method, $path)) {
+            $dispatch = $this->getRoutes($method, $path);
+        } else {
+            foreach ($this->withMethod($method) as $uri => $location) {
+                //设置路由匹配正则
+                $uriRegexp = '#^' . $uri . '$#iU';
+                //路由和请求一致或者匹配到正则
+                if (preg_match($uriRegexp, $path, $match)) {
+                    //如果是正则匹配到的uri且有参数传入则将参数传递给成员属性param
+                    if (isset($match)) {
+                        array_shift($match);
+                        $this->param = $match;
+                    }
+                    $dispatch = $location['route'];
+                    break;
+                }
+            }
+        }
+        if (is_null($dispatch)) {
+            if (!isset($this->routes['none'])) {
+                throw new RouteNotFoundException('Page not found: ' . $path, 404);
+            }
+            $this->param = $this->routes['none']['data'];
+            $dispatch = $this->routes['none']['route'];
+        }
+        if (is_array($dispatch) && 2 == count($dispatch)) {
+            $this->request->controller($dispatch[0]);
+            $this->request->action($dispatch[1]);
+            [$this->controller, $this->action] = $dispatch;
+        } else if (is_string($dispatch)) {
+            $controller = explode('/', $dispatch);
+            $this->action = array_pop($controller);
+            $this->request->action($this->action);
+            foreach ($controller as $directory) {
+                $this->controller .= '\\' . ucfirst($directory);
+            }
+            $this->request->controller($this->controller);
+        } else {
+            $this->controller = $dispatch;
+        }
+
+
         if ($this->controller instanceof \Closure) {
-            $response = ($this->controller)(...$this->param);
+            $response = $this->controller;
         } else if (is_string($this->controller)) {
             $response = function () {
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
@@ -286,7 +285,7 @@ class Route
      */
     public function get($uri, $location)
     {
-        $this->_rule('get', $uri, $location, 'route', $location);
+        $this->_rule('GET', $uri, 'route', $location);
         return $this;
     }
 
@@ -298,7 +297,7 @@ class Route
      */
     public function post($uri, $location)
     {
-        $this->_rule('post', $uri, $location, 'route', $location);
+        $this->_rule('POST', $uri, 'route', $location);
         return $this;
     }
 
@@ -310,7 +309,7 @@ class Route
      */
     public function put($uri, $location)
     {
-        $this->_rule('put', $uri, $location, 'route', $location);
+        $this->_rule('PUT', $uri, 'route', $location);
         return $this;
     }
 
@@ -322,7 +321,7 @@ class Route
      */
     public function delete($uri, $location)
     {
-        $this->_rule('delete', $uri, $location, 'route', $location);
+        $this->_rule('DELETE', $uri, 'route', $location);
         return $this;
     }
 
@@ -334,14 +333,14 @@ class Route
      */
     public function patch($uri, $location)
     {
-        $this->_rule('patch', $uri, $location, 'route', $location);
+        $this->_rule('PATCH', $uri, 'route', $location);
         return $this;
     }
 
 
-    private function _rule($method, $path, $location, $property, $value)
+    private function _rule($method, $path, $property, $value)
     {
-        [$this->method, $this->path, $this->location] = [$method, '/' . trim($path, '/'), $location];
+        [$this->method, $this->path, $this->location] = [$method, '/' . trim($path, '/'), $value];
         foreach ((array)$this->method as $method) {
             $this->routes[strtolower($method)][$this->path][$property] = $value;
         }
@@ -399,7 +398,7 @@ class Route
      */
     public function rule(string $uri, $location, array $requestMethods = ['get', 'post']): Route
     {
-        $this->_rule($requestMethods, $uri, $location, 'route', $location);
+        $this->_rule($requestMethods, $uri, 'route', $location);
         return $this;
     }
 

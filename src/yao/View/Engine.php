@@ -37,7 +37,7 @@ abstract class Engine
      */
     public function __construct($template, Config $config)
     {
-        $this->config = $config->getByType('view');
+        $this->config = $config->getDefault('view');
         $this->template = str_replace('/', DIRECTORY_SEPARATOR, $template) . '.' . $this->config['suffix'] ?: self::SUFFIX;
     }
 

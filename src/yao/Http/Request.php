@@ -4,7 +4,6 @@ namespace Yao\Http;
 
 use Yao\App;
 use Yao\Config;
-use Yao\Exception\RouteNotFoundException;
 
 /**
  * 请求类
@@ -83,7 +82,7 @@ class Request
      */
     public function action($action = null)
     {
-        if (!isset($controller)) {
+        if (!isset($action)) {
             return $this->action;
         }
         $this->action = $action;
@@ -128,7 +127,7 @@ class Request
      */
     public function isMethod(string $method): bool
     {
-        return $this->server('REQUEST_METHOD') == strtoupper($method);
+        return $this->server('REQUEST_METHOD') === strtoupper($method);
     }
 
     /**
@@ -169,7 +168,7 @@ class Request
      */
     public function method(): string
     {
-        return strtolower($this->server('REQUEST_METHOD'));
+        return $this->server('REQUEST_METHOD');
     }
 
     /**
@@ -205,8 +204,10 @@ class Request
 
     /**
      * get请求参数
-     * @param string|array $key 请求的参数列表
-     * @param string $default 字符串参数的默认值
+     * @param string|array $key
+     * 请求的参数列表
+     * @param string|array $default
+     * 字符串参数的默认值
      * @return array|string
      */
     public function get($key = null, $default = null)

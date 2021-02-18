@@ -66,10 +66,10 @@ class Config
      * 只需要传入配置文件名，例如database
      * @return mixed
      */
-    public function getByType($config)
+    public function getDefault($config)
     {
         $config = $this->config[$config];
-        return $config[$config['type']];
+        return $config[$config['default']];
     }
 
     /**

@@ -15,17 +15,8 @@ class Middleware
      */
     protected App $app;
 
-    /**
-     * 路由中间件
-     * @var array
-     */
-    protected array $route = [];
 
-    /**
-     * 控制器中间件
-     * @var array
-     */
-    protected array $controller = [];
+    protected array $middleware = [];
 
     /**
      * Middleware constructor.
@@ -36,26 +27,6 @@ class Middleware
         $this->app = $app;
     }
 
-
-    public function getByRoute(string $route): array
-    {
-        if (isset($this->route[$route])) {
-            return (array)$this->route[$route];
-        }
-        return [];
-    }
-
-
-    public function getByController($controller)
-    {
-
-    }
-
-    /**
-     * 中间件注册方法
-     * @var array
-     */
-    public $middleware = [];
 
     public function handle($request, \Closure $next)
     {
@@ -79,6 +50,13 @@ class Middleware
     public function middleware($request, \Closure $closure)
     {
     }
+
+
+    public function push()
+    {
+
+    }
+
 
     public function set($middleware, $method, $path)
     {
