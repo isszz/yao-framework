@@ -22,8 +22,6 @@ namespace Yao\Facade;
  */
 class Request extends Facade
 {
-    protected static $singleInstance = true;
-
     protected static function getFacadeClass()
     {
         return 'request';

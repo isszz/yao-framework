@@ -11,7 +11,6 @@ namespace Yao\Facade;
  */
 class Session extends Facade
 {
-    protected static $singleInstance = true;
 
     protected static function getFacadeClass()
     {

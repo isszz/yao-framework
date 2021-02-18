@@ -14,9 +14,9 @@ class Redis extends Driver
 
     protected $redis;
 
-    private function __construct()
+    public function __construct()
     {
-        $config = Config::get('cache.' . Config::get('cache.type'));
+        $config = Config::get('cache.' . Config::get('cache.default'));
         $this->redis = new \Redis();
         $this->redis->connect($config['host'], $config['port']);
     }

@@ -3,12 +3,9 @@
 
 namespace Yao\Cache;
 
-use Psr\Cache\CacheItemInterface;
-use Yao\Concerns\SingleInstance;
 
-abstract class Driver implements CacheItemInterface
+abstract class Driver
 {
-    use SingleInstance;
 
     public function get(string $key)
     {

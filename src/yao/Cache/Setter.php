@@ -13,7 +13,7 @@ class Setter
 
     public function __construct()
     {
-        $driver = '\\Yao\\Cache\\Drivers\\' . ucfirst(config('cache.type'));
+        $driver = '\\Yao\\Cache\\Drivers\\' . ucfirst(config('cache.default'));
         $this->driver = new $driver();
     }
 

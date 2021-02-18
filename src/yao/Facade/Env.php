@@ -11,8 +11,6 @@ namespace Yao\Facade;
 class Env extends Facade
 {
 
-    protected static $singleInstance = true;
-
     protected static function getFacadeClass()
     {
         return 'env';

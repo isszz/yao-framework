@@ -12,8 +12,6 @@ namespace Yao\Facade;
 class Config extends Facade
 {
 
-    protected static $singleInstance = true;
-
     protected static function getFacadeClass()
     {
         return 'config';

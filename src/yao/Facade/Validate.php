@@ -12,6 +12,8 @@ namespace Yao\Facade;
 class Validate extends Facade
 {
 
+    protected static $singleInstance = false;
+
     protected static function getFacadeClass()
     {
         return 'validate';

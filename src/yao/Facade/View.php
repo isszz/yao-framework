@@ -9,7 +9,6 @@ namespace Yao\Facade;
  */
 class View extends Facade
 {
-    protected static $singleInstance = true;
 
     protected static function getFacadeClass()
     {

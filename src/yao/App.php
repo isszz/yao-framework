@@ -5,6 +5,7 @@ namespace Yao;
 
 use App\Http\Validate;
 use Yao\Http\{Middleware, Request, Response, Route, Route\Alias, Session};
+use Yao\Cache\Setter;
 use Yao\Event\Event;
 use Yao\View\Render;
 
@@ -19,6 +20,7 @@ defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARA
  * @property Response $response
  * @property Session $session
  * @property Log $log
+ * @property Cache $cache
  * @property Event $event
  * @property Middleware $middleware
  * Class App
@@ -31,6 +33,7 @@ class App extends Container
      * @var array|string[]
      */
     protected array $bind = [
+        'cache' => Setter::class,
         'request' => Request::class,
         'validate' => Validate::class,
         'file' => File::class,
