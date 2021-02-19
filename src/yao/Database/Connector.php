@@ -8,8 +8,6 @@ class Connector
 
     const FETCHTYPE = \PDO::FETCH_ASSOC;
 
-    private string $type = '';
-
     private $PDOstatement;
 
     private \PDO $pdo;
