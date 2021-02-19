@@ -3,8 +3,9 @@
 namespace Yao\Facade;
 
 /**
- * @method get($key)
- * @method set($key, $value)
+ * @method static get($key)
+ * @method static set($key, $value)
+ * @method static \Redis handle()
  * Class Cache
  * @package Yao\Facade
  */

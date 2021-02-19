@@ -3,7 +3,6 @@
 namespace Yao\Cache\Drivers;
 
 use Yao\Cache\Driver;
-use Yao\Facade\Config;
 
 /**
  * Class Redis
@@ -12,13 +11,23 @@ use Yao\Facade\Config;
 class Redis extends Driver
 {
 
-    protected $redis;
+    protected \Redis $redis;
 
-    public function __construct()
+    public function __construct($config)
     {
-        $config = Config::get('cache.' . Config::get('cache.default'));
         $this->redis = new \Redis();
-        $this->redis->connect($config['host'], $config['port']);
+        $this->redis->connect($config['host'], $config['port'], $config['timeout']);
+        if ($config['auth']) {
+            $this->redis->auth($config['auth']);
+        }
+    }
+
+    /**
+     * @return \Redis
+     */
+    public function handle()
+    {
+        return $this->redis;
     }
 
     public function set(string $key, $value, ?int $timeout = null)

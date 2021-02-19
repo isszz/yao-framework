@@ -50,7 +50,7 @@ class App extends Container
         'alias' => Alias::class,
         'middleware' => Middleware::class
     ];
-
+    
     /**
      * 环境变量设置
      */

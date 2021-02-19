@@ -102,29 +102,111 @@ class Route
     }
 
     /**
-     * 获取路由列表
-     * @param null $requestMethod
-     * @param null $requestPath
-     * @return array|mixed
+     * get方式注册的路由
+     * @param $uri
+     * @param $location
+     * @return $this
      */
-    public function getRoute($requestMethod = null, $requestPath = null)
+    public function get($uri, $location)
     {
-        return $requestPath ? $this->routes[$requestMethod][$requestPath] : ($requestMethod ? $this->routes[$requestMethod] : $this->routes);
+        $this->_setRoute('GET', $uri, $location);
+        return $this;
+    }
+
+    /**
+     * post方式注册的路由
+     * @param $uri
+     * @param $location
+     * @return $this
+     */
+    public function post($uri, $location)
+    {
+        $this->_setRoute('POST', $uri, $location);
+        return $this;
+    }
+
+    /**
+     * put方式注册的路由
+     * @param $uri
+     * @param $location
+     * @return $this
+     */
+    public function put($uri, $location)
+    {
+        $this->_setRoute('PUT', $uri, $location);
+        return $this;
     }
 
 
     /**
+     * delete方式注册的路由
+     * @param $uri
+     * @param $location
+     * @return $this
+     */
+    public function delete($uri, $location)
+    {
+        $this->_setRoute('DELETE', $uri, $location);
+        return $this;
+    }
+
+    /**
+     * patch方式注册的路由
+     * @param $uri
+     * @param $location
+     * @return $this
+     */
+    public function patch($uri, $location)
+    {
+        $this->_setRoute('PATCH', $uri, $location);
+        return $this;
+    }
+
+    /**
      * 重定向路由
-     * @param string $path
+     * @param string $uri
      * @param string $location
      * @param int $code
-     * @param array|string[] $requestMethods
+     * @param array|string[] $methods
+     * @return $this
      */
-    public function redirect(string $path, string $location, int $code = 302, array $requestMethods = ['get'])
+    public function redirect(string $uri, string $location, int $code = 302, array $methods = ['get'])
     {
-        $this->_rule($requestMethods, $path, $location, 'route', function () use ($code, $location) {
+        $this->_setRoute($methods, $uri, function () use ($code, $location) {
             return redirect($location, $code);
         });
+        return $this;
+    }
+
+    /**
+     * 视图路由
+     * @param string $uri
+     * @param string $view
+     * @param array $data
+     * @param array|string[] $methods
+     * @return $this
+     */
+    public function view(string $uri, string $view, array $data = [], array $methods = ['get'])
+    {
+        $this->_setRoute($methods, $uri, function () use ($view, $data) {
+            return view($view, $data);
+        });
+        return $this;
+    }
+
+
+    /**
+     * 多类型route注册
+     * @param string $uri
+     * 访问路径
+     * @param string $location
+     * 路由表达式
+     * @param array $type
+     * 多个请求方式的数组
+     */
+    public function rule(string $uri, $location, array $requestMethods = ['get', 'post']): Route
+    {
+        $this->_setRoute($requestMethods, $uri, $location);
         return $this;
     }
 
@@ -141,69 +223,10 @@ class Route
     }
 
     /**
-     * 跨域支持
-     */
-    public function allowCors()
-    {
-        if (isset($this->routes[$this->request->method()][$this->request->path()]['cors'])) {
-            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
-            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
-            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
-            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
-            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
-            header('Access-Control-Allow-Origin:' . $origin);
-            header('Access-Control-Allow-Credentials:' . $credentials);
-            header('Access-Control-Allow-Headers:' . $headers);
-            header('Access-Control-Max-Age:' . $age);
-        } else if ('options' == $this->request->method()) {
-            //需要优化下，解决了其他请求方式下的跨域问题
-            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
-            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
-            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
-            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
-            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
-            header('Access-Control-Allow-Origin:' . $origin);
-            header('Access-Control-Allow-Credentials:' . $credentials);
-            header('Access-Control-Max-Age:' . $age);
-            header('Access-Control-Allow-Headers:' . $headers, true, 204);
-            exit;
-        }
-    }
-
-    private function hasRoute($method, $path)
-    {
-        return isset($this->routes[$method][$path]['route']);
-    }
-
-    private function getRoutes($method, $path)
-    {
-        return $this->routes[$method][$path]['route'];
-    }
-
-    private function withMethod($method)
-    {
-        if (!isset($this->routes[$method])) {
-            throw new RouteNotFoundException('Method not allowed: ' . $method);
-        }
-        return (array)$this->routes[$method];
-    }
-
-    /**
-     * 视图路由
-     * @param string $path
-     * @param string $view
-     * @param array $data
-     * @param array|string[] $requestMethods
+     * 路由中间件注册方法
+     * @param $middleware
      * @return $this
      */
-    public function view(string $path, string $view, array $data = [], array $requestMethods = ['get'])
-    {
-        $this->_rule($requestMethods, $path, $view, 'route', function () use ($view, $data) {
-            return view($view, $data);
-        });
-        return $this;
-    }
-
     public function middleware($middleware)
     {
         $this->app[\Yao\Http\Middleware::class]->set($middleware, $this->method, $this->path);
@@ -211,10 +234,60 @@ class Route
         return $this;
     }
 
+    /**
+     * 路由别名设置
+     * @param $name
+     * 路由别名
+     * @return $this
+     */
+    public function alias(string $name): Route
+    {
+        $this->app['alias']->set($name, $this->path);
+        return $this;
+    }
+
+
+    /**
+     * 路由允许跨域设置
+     * @param null $AllowOrigin
+     * 允许跨域域名
+     * @param null $AllowCredentials
+     * 是否可以将对请求的响应暴露给页面
+     * @param null $AllowHeaders
+     * 允许的头信息
+     * @return $this
+     */
+    public function cors($allowOrigin = null, ?bool $allowCredentials = null, $allowHeaders = null, $allowAge = 600): Route
+    {
+        //需要判断是否存在配置，不存在则默认
+        $cors = $this->config->get('cors');
+        $allowOrigin || $allowOrigin = $cors['origin'];
+        $allowHeaders || $allowHeaders = $cors['headers'];
+        $allowAge || $allowAge = $cors['max_age'];
+        isset($allowCredentials) || $allowCredentials = $cors['credentials'];
+        $allowCredentials = $allowCredentials ? 'true' : 'false';
+        foreach ((array)$this->method as $method) {
+            $this->routes[$method][$this->path]['cors'] = [
+                'origin' => $allowOrigin,
+                'credentials' => $allowCredentials,
+                'headers' => $allowHeaders
+            ];
+        }
+        return $this;
+    }
+
+    private function _setRoute($method, $uri, $location)
+    {
+        [$this->method, $this->path, $this->location] = [$method, '/' . trim($uri, '/'), $location];
+        foreach ((array)$this->method as $method) {
+            $this->routes[$method][$this->path]['route'] = $location;
+        }
+    }
+
     public function dispatch()
     {
         $this->allowCors();
-        $method = strtolower($this->request->method());
+        $method = $this->request->method();
         $path = $this->request->path();
         $dispatch = null;
         if ($this->hasRoute($method, $path)) {
@@ -276,131 +349,65 @@ class Route
         }
     }
 
-
     /**
-     * get方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
+     * 跨域支持
      */
-    public function get($uri, $location)
+    public function allowCors()
     {
-        $this->_rule('GET', $uri, 'route', $location);
-        return $this;
-    }
-
-    /**
-     * post方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function post($uri, $location)
-    {
-        $this->_rule('POST', $uri, 'route', $location);
-        return $this;
-    }
-
-    /**
-     * put方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function put($uri, $location)
-    {
-        $this->_rule('PUT', $uri, 'route', $location);
-        return $this;
-    }
-
-    /**
-     * delete方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function delete($uri, $location)
-    {
-        $this->_rule('DELETE', $uri, 'route', $location);
-        return $this;
-    }
-
-    /**
-     * patch方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function patch($uri, $location)
-    {
-        $this->_rule('PATCH', $uri, 'route', $location);
-        return $this;
-    }
-
-
-    private function _rule($method, $path, $property, $value)
-    {
-        [$this->method, $this->path, $this->location] = [$method, '/' . trim($path, '/'), $value];
-        foreach ((array)$this->method as $method) {
-            $this->routes[strtolower($method)][$this->path][$property] = $value;
+        if (isset($this->routes[$this->request->method()][$this->request->path()]['cors'])) {
+            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
+            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
+            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
+            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
+            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
+            header('Access-Control-Allow-Origin:' . $origin);
+            header('Access-Control-Allow-Credentials:' . $credentials);
+            header('Access-Control-Allow-Headers:' . $headers);
+            header('Access-Control-Max-Age:' . $age);
+        } else if ('options' == $this->request->method()) {
+            //需要优化下，解决了其他请求方式下的跨域问题
+            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
+            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
+            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
+            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
+            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
+            header('Access-Control-Allow-Origin:' . $origin);
+            header('Access-Control-Allow-Credentials:' . $credentials);
+            header('Access-Control-Max-Age:' . $age);
+            header('Access-Control-Allow-Headers:' . $headers, true, 204);
+            exit;
         }
     }
 
-    /**
-     * 路由别名设置
-     * @param $name
-     * 路由别名
-     * @return $this
-     */
-    public function alias(string $name): Route
+    private function hasRoute($method, $path)
     {
-        $this->app['alias']->set($name, $this->path);
-        return $this;
+        return isset($this->routes[$method][$path]['route']);
     }
 
-    /**
-     * 路由允许跨域设置
-     * @param null $AllowOrigin
-     * 允许跨域域名
-     * @param null $AllowCredentials
-     * 是否可以将对请求的响应暴露给页面
-     * @param null $AllowHeaders
-     * 允许的头信息
-     * @return $this
-     */
-    public function cors($allowOrigin = null, ?bool $allowCredentials = null, $allowHeaders = null, $allowAge = 600): Route
+    private function getRoutes($method, $path)
     {
-        //需要判断是否存在配置，不存在则默认
-        $cors = $this->config->get('cors');
-        $allowOrigin || $allowOrigin = $cors['origin'];
-        $allowHeaders || $allowHeaders = $cors['headers'];
-        $allowAge || $allowAge = $cors['max_age'];
-        isset($allowCredentials) || $allowCredentials = $cors['credentials'];
-        $allowCredentials = $allowCredentials ? 'true' : 'false';
-        foreach ((array)$this->method as $method) {
-            $this->routes[$method][$this->path]['cors'] = [
-                'origin' => $allowOrigin,
-                'credentials' => $allowCredentials,
-                'headers' => $allowHeaders
-            ];
+        return $this->routes[$method][$path]['route'];
+    }
+
+    private function withMethod($method)
+    {
+        if (!isset($this->routes[$method])) {
+            throw new RouteNotFoundException('Method not allowed: ' . $method);
         }
-        return $this;
+        return (array)$this->routes[$method];
     }
 
     /**
-     * 多类型route注册
-     * @param string $uri
-     * 访问路径
-     * @param string $location
-     * 路由表达式
-     * @param array $type
-     * 多个请求方式的数组
+     * 获取路由列表
+     * @param null $requestMethod
+     * @param null $requestPath
+     * @return array|mixed
      */
-    public function rule(string $uri, $location, array $requestMethods = ['get', 'post']): Route
+    public function getRoute($requestMethod = null, $requestPath = null)
     {
-        $this->_rule($requestMethods, $uri, 'route', $location);
-        return $this;
+        return $requestPath ? $this->routes[$requestMethod][$requestPath] : ($requestMethod ? $this->routes[$requestMethod] : $this->routes);
     }
+
 
     /**
      * 路由注册方法
