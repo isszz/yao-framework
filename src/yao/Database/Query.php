@@ -39,7 +39,7 @@ class Query
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->database = $app->config->get('database.type');
+        $this->database = $app->config->get('database.default');
         if (!$this->database) {
             throw new \Exception('数据库配置文件不存在');
         }

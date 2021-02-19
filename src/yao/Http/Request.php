@@ -168,7 +168,7 @@ class Request
      */
     public function method(): string
     {
-        return $this->server('REQUEST_METHOD');
+        return strtolower($this->server('REQUEST_METHOD'));
     }
 
     /**

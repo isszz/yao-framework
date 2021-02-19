@@ -165,7 +165,7 @@ abstract class Driver
         }
         $sql = 'INSERT INTO ' . $this->name . $fields . ' ' . 'VALUES ' . $params;
         $this->query->prepare($sql, $this->bindParam);
-        return $this->query->getPdo()->lastinsertid();
+        return $this->query->get()->lastinsertid();
     }
 
     /**

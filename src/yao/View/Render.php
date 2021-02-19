@@ -27,7 +27,7 @@ class Render
     public function __construct(App $app)
     {
         $this->app = $app;
-        if (!class_exists($this->driver = $app->config->get('view.type'))) {
+        if (!class_exists($this->driver = $app->config->get('view.default'))) {
             $this->driver = 'Yao\\View\\Engines\\' . ucfirst($this->driver);
         }
     }

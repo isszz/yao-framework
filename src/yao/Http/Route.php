@@ -44,7 +44,13 @@ class Route
      * 路由注册树
      * @var array
      */
-    protected array $routes = [];
+    protected array $routes = [
+        'get' => [],
+        'post' => [],
+        'put' => [],
+        'delete' => [],
+        'patch' => []
+    ];
 
     /**
      * 当前请求的控制器
@@ -102,64 +108,18 @@ class Route
     }
 
     /**
-     * get方式注册的路由
-     * @param $uri
-     * @param $location
+     * 路由注册
+     * @param $method
+     * @param $arguments
      * @return $this
      */
-    public function get($uri, $location)
+    public function __call($method, $arguments)
     {
-        $this->_setRoute('GET', $uri, $location);
-        return $this;
-    }
-
-    /**
-     * post方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function post($uri, $location)
-    {
-        $this->_setRoute('POST', $uri, $location);
-        return $this;
-    }
-
-    /**
-     * put方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function put($uri, $location)
-    {
-        $this->_setRoute('PUT', $uri, $location);
-        return $this;
-    }
-
-
-    /**
-     * delete方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function delete($uri, $location)
-    {
-        $this->_setRoute('DELETE', $uri, $location);
-        return $this;
-    }
-
-    /**
-     * patch方式注册的路由
-     * @param $uri
-     * @param $location
-     * @return $this
-     */
-    public function patch($uri, $location)
-    {
-        $this->_setRoute('PATCH', $uri, $location);
-        return $this;
+        if (array_key_exists($method, $this->routes)) {
+            $this->_setRoute($method, ...$arguments);
+            return $this;
+        }
+        throw new RouteNotFoundException('Method Not Allowed: ' . $method);
     }
 
     /**
@@ -172,6 +132,7 @@ class Route
      */
     public function redirect(string $uri, string $location, int $code = 302, array $methods = ['get'])
     {
+        //可以让路由传递参数给闭包
         $this->_setRoute($methods, $uri, function () use ($code, $location) {
             return redirect($location, $code);
         });
@@ -194,15 +155,11 @@ class Route
         return $this;
     }
 
-
     /**
-     * 多类型route注册
      * @param string $uri
-     * 访问路径
-     * @param string $location
-     * 路由表达式
-     * @param array $type
-     * 多个请求方式的数组
+     * @param $location
+     * @param array|string[] $requestMethods
+     * @return $this
      */
     public function rule(string $uri, $location, array $requestMethods = ['get', 'post']): Route
     {
