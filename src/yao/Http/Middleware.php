@@ -16,7 +16,10 @@ class Middleware
     protected App $app;
 
 
-    protected array $middleware = [];
+    protected array $route = [];
+
+    protected array $controller = [];
+
 
     /**
      * Middleware constructor.
@@ -27,44 +30,60 @@ class Middleware
         $this->app = $app;
     }
 
-
-    public function handle($request, \Closure $next)
+    public function setRouteMiddlewares($method, $path, $middleware)
     {
+        foreach ((array)$method as $m) {
+            $this->route[$method][$path] = $middleware;
+        }
     }
 
-
-    public function make()
+    public function setControllerMiddlewares(array $middleware)
     {
+        $this->controller = $middleware;
     }
 
-
-    public function before()
+    public function getRoute($method, $path)
     {
+        return $this->route[$method][$path] ?? [];
     }
 
-
-    public function after()
+    public function getController()
     {
+        $middlewares = [];
+        foreach ($this->controller as $middleware => $actions) {
+            if (is_string($actions)) {
+                if ('*' == $actions) {
+                    $middlewares[] = $middleware;
+                }
+            } else if (in_array($this->app->request->action(), $actions)) {
+                $middlewares[] = $middleware;
+            }
+        }
+        return $middlewares;
     }
 
-    public function middleware($request, \Closure $closure)
+    public function make($request, $type)
     {
+        $dispatch = [];
+        if ('route' == $type) {
+            $dispatch = $this->getRoute($this->app->request->method(), $this->app->request->path());
+        } else if ('controller' == $type) {
+            $dispatch = $this->getController();
+        }
+        $return = $request;
+        if (!empty($dispatch)) {
+            foreach ($dispatch as $middleware) {
+                $return = (new $middleware())->handle($request, function ($request) {
+                    return $request;
+                });
+            }
+        }
+        return $return;
     }
 
-
-    public function push()
+    public function call()
     {
 
     }
 
-
-    public function set($middleware, $method, $path)
-    {
-        $this->middleware[$method][$path] = [...($this->middleware[$method][$path] ?? []), ...(array)$middleware];
-    }
-
-    public function get()
-    {
-        return $this->middleware[\Yao\Facade\Request::method()][\Yao\Facade\Request::path()];
-    }
 }

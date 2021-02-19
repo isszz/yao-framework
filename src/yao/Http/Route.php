@@ -88,11 +88,6 @@ class Route
      */
     private $location;
 
-    /**
-     * 路由中间件
-     * @var
-     */
-    private $middleware;
 
     /**
      * 初始化实例列表
@@ -186,8 +181,7 @@ class Route
      */
     public function middleware($middleware)
     {
-        $this->app[\Yao\Http\Middleware::class]->set($middleware, $this->method, $this->path);
-        $this->_rule($this->method, $this->path, $this->location, 'middleware', $middleware);
+        $this->app['middleware']->setRouteMiddlewares($middleware, $this->method, $this->path);
         return $this;
     }
 
@@ -292,18 +286,12 @@ class Route
         if ($this->controller instanceof \Closure) {
             $response = $this->controller;
         } else if (is_string($this->controller)) {
+            $this->app->make($this->controller);
             $response = function () {
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
         }
-        if (isset($this->routes[$this->request->method()][$this->request->path()]['middleware'])) {
-            $middleware = $this->routes[$this->request->method()][$this->request->path()]['middleware'];
-            return (new $middleware)->handle($response, function ($response) {
-                return $this->response->data($response)->return();
-            });
-        } else {
-            return $this->response->data($response)->return();
-        }
+        return $this->response->data($this->app['middleware']->make($response, 'controller'))->return();
     }
 
     /**

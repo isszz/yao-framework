@@ -40,7 +40,7 @@ abstract class Controller
         $this->app = $app;
         $this->request = $app->request;
         $this->init();
-//        $this->_registerMiddleware();
+        $this->_registerMiddleware();
     }
 
     /**
@@ -55,8 +55,7 @@ abstract class Controller
      */
     final protected function _registerMiddleware()
     {
-        $this->app->middleware
-            ->set($this->middleware, $this->request->method(), $this->request->path());
+        $this->app['middleware']->setControllerMiddlewares($this->middleware);
     }
 
     /**
