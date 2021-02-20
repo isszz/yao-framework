@@ -81,9 +81,4 @@ class Middleware
         return $return;
     }
 
-    public function call()
-    {
-
-    }
-
 }
