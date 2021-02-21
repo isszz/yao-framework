@@ -66,7 +66,7 @@ class Middleware
     {
         $dispatch = [];
         if ('route' == $type) {
-            $dispatch = $this->getRoute($this->app->request->method(), $this->app->request->path());
+            $dispatch = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
         } else if ('controller' == $type) {
             $dispatch = $this->getController();
         }

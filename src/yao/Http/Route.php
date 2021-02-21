@@ -181,7 +181,7 @@ class Route
      */
     public function middleware($middleware)
     {
-        $this->app['middleware']->setRouteMiddlewares($middleware, $this->method, $this->path);
+        $this->app['middleware']->setRouteMiddlewares($this->method, $this->path, $middleware);
         return $this;
     }
 
@@ -282,7 +282,12 @@ class Route
             $this->controller = $dispatch;
         }
 
+        return $this->app['middleware']->make($this->_dispatch(), 'route');
 
+    }
+
+    private function _dispatch()
+    {
         if ($this->controller instanceof \Closure) {
             $response = $this->controller;
         } else if (is_string($this->controller)) {
@@ -293,6 +298,7 @@ class Route
         }
         return $this->response->data($this->app['middleware']->make($response, 'controller'))->return();
     }
+
 
     /**
      * 跨域支持
