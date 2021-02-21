@@ -65,20 +65,44 @@ class Middleware
     public function make($request, $type)
     {
         $dispatch = [];
-        if ('route' == $type) {
-            $dispatch = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
-        } else if ('controller' == $type) {
-            $dispatch = $this->getController();
-        } else if ('global' == $type) {
-            $dispatch = (array)$this->app->config->get('app.middleware');
+        switch ($type) {
+            case 'route':
+                $dispatch = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
+                break;
+            case 'controller':
+                $dispatch = $this->getController();
+                break;
+            case 'global':
+                $dispatch = (array)$this->app->config->get('app.middleware');
+                break;
+            default:
+                throw new \Exception('不能调度中间件');
         }
+//        return $this->pipeline($dispatch, $request);
         $return = $request;
         if (!empty($dispatch)) {
             foreach ($dispatch as $middleware) {
-                $return = (new $middleware())->handle($request, function ($request) {
+                $return = function () use($middleware,$request) {
+                    return (new $middleware())->handle($request, function ($request) {
+                        return $request;
+                    });
+                };
+            }
+        }
+        return $return;
+    }
+
+    public function pipeline($array, $request)
+    {
+        static $return;
+        if (!empty($array)) {
+            $middleware = array_shift($array);
+            $return = function () use ($request, $middleware) {
+                return (new $middleware())->handle($request, function ($request) {
                     return $request;
                 });
-            }
+            };
+            return $this->pipeline($array, $return);
         }
         return $return;
     }

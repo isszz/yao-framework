@@ -282,7 +282,9 @@ class Route
             $this->controller = $dispatch;
         }
 
-        return $this->app['middleware']->make($this->_dispatch(), 'route');
+        return $this->app['middleware']->make(function () {
+            return $this->_dispatch();
+        }, 'route');
 
     }
 
@@ -296,9 +298,9 @@ class Route
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
         }
-        return $this->response
-            ->data($this->app['middleware']->make($response, 'controller'))
-            ->send();
+        return function () use($response) {
+            return $this->app['middleware']->make($response, 'controller');
+        };
     }
 
 
