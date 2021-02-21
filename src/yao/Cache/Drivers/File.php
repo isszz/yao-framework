@@ -28,7 +28,10 @@ class File extends Driver
 
     public function get(string $key)
     {
-        return file_get_contents($this->path . strtolower($key));
+        if ($this->has($key)) {
+            return file_get_contents($this->path . strtolower($key));
+        }
+        throw new \Exception('Cache not found: ' . $key,999);
     }
 
     public function set($key, $value)
