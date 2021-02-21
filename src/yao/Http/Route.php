@@ -296,7 +296,9 @@ class Route
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
         }
-        return $this->response->data($this->app['middleware']->make($response, 'controller'))->return();
+        return $this->response
+            ->data($this->app['middleware']->make($response, 'controller'))
+            ->send();
     }
 
 

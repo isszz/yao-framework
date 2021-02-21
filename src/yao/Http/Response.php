@@ -116,7 +116,7 @@ class Response
     /**
      * 响应执行
      */
-    public function return()
+    public function send()
     {
         $this->create();
         ob_end_flush();

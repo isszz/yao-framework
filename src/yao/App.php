@@ -9,8 +9,6 @@ use Yao\Cache\Setter;
 use Yao\Event\Event;
 use Yao\View\Render;
 
-defined('ROOT_PATH') || define('ROOT_PATH', dirname(getcwd()) . DIRECTORY_SEPARATOR);
-
 /**
  * @property Request $request
  * @property Validate $validate
@@ -50,7 +48,7 @@ class App extends Container
         'alias' => Alias::class,
         'middleware' => Middleware::class
     ];
-    
+
     /**
      * 环境变量设置
      */

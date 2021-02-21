@@ -26,7 +26,12 @@ class Env
 
     public function __construct()
     {
-        $this->root = ROOT_PATH;
+        if ('cli' === PHP_SAPI) {
+            $this->root = getcwd() . DIRECTORY_SEPARATOR;
+        } else {
+            $this->root = dirname(getcwd()) . DIRECTORY_SEPARATOR;
+        }
+//        $this->root = ROOT_PATH;
         $this->_load();
     }
 

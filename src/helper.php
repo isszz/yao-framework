@@ -67,7 +67,7 @@ if (false === function_exists('json')) {
     {
         return Json::data($data)->code($code)
             ->header($header)
-            ->return();
+            ->send();
     }
 }
 
@@ -86,7 +86,7 @@ if (false === function_exists('response')) {
         return Response::data($data)
             ->code($code)
             ->header($header)
-            ->return();
+            ->send();
     }
 }
 if (false === function_exists('session')) {

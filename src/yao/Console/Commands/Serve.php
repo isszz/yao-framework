@@ -8,11 +8,12 @@ class Serve extends Command
 {
     public function out()
     {
-        echo '输入运行的端口[为空默认8080]:';
-        fscanf(STDIN, '%d', $options);
-        $port = $options ?? 8080;
+        if (function_exists('passthru')) {
+            echo '输入运行的端口[为空默认8080]:';
+            fscanf(STDIN, '%d', $options);
+            $port = $options ?? 8080;
 
-        echo <<<EOT
+            echo <<<EOT
 +------------------------------------------------------+
 |                         Yao                          |
 |             https://github.com/topyao/yao            |
@@ -20,6 +21,9 @@ class Serve extends Command
 Welcome                        Press 'CTRL + C' to quit.
 
 EOT;
-        passthru('php -S localhost:' . $port . ' -t public ./public/router.php');
+            passthru('php -S localhost:' . $port . ' -t public ./public/router.php');
+        } else {
+            exit('环境不支持passthru函数，请取消禁用或者搭建运行环境！');
+        }
     }
 }
