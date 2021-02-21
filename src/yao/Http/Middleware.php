@@ -69,6 +69,8 @@ class Middleware
             $dispatch = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
         } else if ('controller' == $type) {
             $dispatch = $this->getController();
+        } else if ('global' == $type) {
+            $dispatch = (array)$this->app->config->get('app.middleware');
         }
         $return = $request;
         if (!empty($dispatch)) {
