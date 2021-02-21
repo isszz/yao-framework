@@ -4,6 +4,7 @@ namespace Yao\Http;
 
 use Yao\App;
 use Yao\Config;
+use Yao\Tools\Arr;
 
 /**
  * 请求类
@@ -272,22 +273,6 @@ class Request
         }
     }
 
-    private function _makeStringArgument($input, $argument, $default = '')
-    {
-        return isset($input[$argument])
-            ? $this->_filter($input[$argument])
-            : $default;
-    }
-
-    private function _makeArrayArguments($input, array $argument, $default = [])
-    {
-        $return = [];
-        foreach ($argument as $key => $value) {
-            $return[$value] = isset($input[$value]) ? $this->_filter($input[$value]) : ($default[$value] ?? null);
-        }
-        return $return;
-    }
-
     private function _request($params, $key = null, $default = null)
     {
         if (!isset($key)) {
@@ -296,10 +281,28 @@ class Request
             }, $params);
         }
         if (is_string($key)) {
-            return $this->_makeStringArgument($params, $key, $default);
+            return isset($params[$key])
+                ? $this->_filter($params[$key])
+                : $default;
         }
         if (is_array($key)) {
-            return $this->_makeArrayArguments($params, $key, $default);
+            $return = [];
+            $default = [];
+            if (Arr::isAssoc($key)) {
+                $key = Arr::getAssoc($key);
+                $default = array_values($key);
+                $key = array_keys($key);
+            }
+            foreach ($key as $k => $value) {
+                if (!isset($params[$value])) {
+                    if (isset($default[$k])) {
+                        $return[$value] = $default[$k];
+                    }
+                } else {
+                    $return[$value] = $params[$value];
+                }
+            }
+            return $return;
         }
         return null;
     }
