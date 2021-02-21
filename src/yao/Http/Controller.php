@@ -16,7 +16,7 @@ abstract class Controller
      * 控制器中间件列表
      * @var array
      */
-    public $middleware = [];
+    protected $middleware = [];
 
     /**
      * 容器实例
