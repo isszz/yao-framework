@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Yao;
 
-use Yao\Concerns\Parse;
+use Yao\Tools\Str;
 
 /**
  * 配置文件加载和获取
@@ -12,8 +12,6 @@ use Yao\Concerns\Parse;
  */
 class Config
 {
-    use Parse;
-
     /**
      * 存放配置的数组
      * @var array
@@ -41,7 +39,7 @@ class Config
         if (!isset($key)) {
             return $this->config;
         }
-        return $this->parse($this->config, $key, $default);
+        return Str::parse($this->config, $key, $default);
     }
 
 

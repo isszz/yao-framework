@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Yao;
 
+use Yao\Tools\Str;
+
 /**
  * Env加载和获取
  * Class Env
@@ -10,9 +12,6 @@ namespace Yao;
  */
 class Env
 {
-
-    use \Yao\Concerns\Parse;
-
     /**
      * 存放env的数组
      * @var array
@@ -74,7 +73,7 @@ class Env
         if (is_null($key)) {
             return $this->env;
         }
-        return $this->parse($this->env, strtoupper($key), $default);
+        return Str::parse($this->env, strtoupper($key), $default);
     }
 
     public function has($key)

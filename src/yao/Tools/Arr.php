@@ -6,16 +6,31 @@ namespace Yao\Tools;
 
 class Arr
 {
+    /**
+     * 判断数组是不是关联数组
+     * @param array $array
+     * @return bool
+     */
     public static function isAssoc(array $array)
     {
-        return !self::isNumber($array);
+        return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    public static function isNumber(array $array)
+    /**
+     * 判断是否索引数组
+     * @param array $array
+     * @return bool
+     */
+    public static function isIndex(array $array)
     {
         return array_keys($array) === range(0, count($array) - 1);
     }
 
+    /**
+     * 获取一个关联数组，索引数组的键值对将转换为值=>null对
+     * @param array $array
+     * @return array
+     */
     public static function getAssoc(array $array)
     {
         $return = [];
