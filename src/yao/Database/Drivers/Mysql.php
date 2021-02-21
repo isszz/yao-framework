@@ -15,7 +15,7 @@ class Mysql extends Driver
      */
     public function limit($limit, $offset = null)
     {
-        $this->_setLimit('LIMIT ' . $limit . ($offset ? ',' . $offset : ''));
+        $this->_setLimit('LIMIT ' . $limit . (is_null($offset) ? '' : ',' . $offset));
         return $this;
     }
 
