@@ -2,9 +2,7 @@
 
 namespace Yao\Http;
 
-use Yao\App;
-use Yao\Config;
-use Yao\Tools\Arr;
+use Yao\{App, Config, Tools\Arr};
 
 /**
  * 请求类
@@ -293,6 +291,7 @@ class Request
                 $default = array_values($key);
                 $key = array_keys($key);
             }
+            //数字索引的时候有bug
             foreach ($key as $k => $value) {
                 if (!isset($params[$value])) {
                     if (isset($default[$k])) {
