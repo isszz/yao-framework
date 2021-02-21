@@ -109,7 +109,7 @@ class Error
         } else {
             include_once $this->exceptionView;
         }
-        exit($return->code((int)$exception->getCode())->return());
+        $return->code((int)$exception->getCode())->return();
     }
 
     /**
