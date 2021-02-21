@@ -31,7 +31,7 @@ class File extends Driver
         if ($this->has($key)) {
             return file_get_contents($this->path . strtolower($key));
         }
-        throw new \Exception('Cache not found: ' . $key,999);
+        throw new \InvalidArgumentException('Cache not found: ' . $key, 999);
     }
 
     public function set($key, $value)
