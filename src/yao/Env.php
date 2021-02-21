@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yao;
@@ -29,9 +30,8 @@ class Env
         if ('cli' === PHP_SAPI) {
             $this->root = getcwd() . DIRECTORY_SEPARATOR;
         } else {
-            $this->root = dirname(getcwd()) . DIRECTORY_SEPARATOR;
+            $this->root = dirname($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR;
         }
-//        $this->root = ROOT_PATH;
         $this->_load();
     }
 
@@ -83,6 +83,5 @@ class Env
 
     public function has($key)
     {
-
     }
 }

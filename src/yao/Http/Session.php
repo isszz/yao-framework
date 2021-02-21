@@ -2,10 +2,14 @@
 
 namespace Yao\Http;
 
+use Yao\Config;
+use Yao\Tools\Str;
 
 class Session
 {
-    use \Yao\Concerns\Parse;
+
+
+    protected bool $autostart;
 
     /**
      * 初始化session
@@ -16,6 +20,11 @@ class Session
         isset($_SESSION) || session_start();
     }
 
+
+    public function init()
+    {
+    }
+
     /**
      * session获取方法
      * @param $name
@@ -23,7 +32,7 @@ class Session
      */
     public function get($name)
     {
-        return $this->parse($_SESSION, $name);
+        return Str::parse($_SESSION, $name);
     }
 
     /**
