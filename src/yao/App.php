@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yao;
 
 use App\Http\Validate;
-use Yao\{Cache\Setter, Event\Event, View\Render};
+use Yao\{Cache\Setter, Database\Query, Event\Event, View\Render};
 use Yao\Http\{Middleware, Request, Response, Route, Route\Alias, Session};
 
 /**
@@ -44,6 +44,7 @@ class App extends Container
         'response' => Response::class,
         'session' => Session::class,
         'log' => Log::class,
+        'db' => Query::class,
         'event' => Event::class,
         'alias' => Alias::class,
         'middleware' => Middleware::class
