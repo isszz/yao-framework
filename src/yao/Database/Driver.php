@@ -12,37 +12,79 @@ use Yao\App;
  */
 abstract class Driver
 {
-    //表名
+    /**
+     * 表名
+     * @var string
+     */
     protected string $name;
+
+    /**
+     * 默认字段列表为*
+     * @var string
+     */
     protected string $field = '*';
+
+    /**
+     * PDO预处理绑定参数列表
+     * @var array
+     */
     protected array $bindParam = [];
+
+    /**
+     * 数据集对象
+     * @var Collection
+     */
     protected Collection $collection;
-    //存放拼接sql的必要数组
+
+    /**
+     * 存放条件排序的数组
+     * @var array|string[]
+     */
     protected array $construction = [
         'where' => '',
         'group' => '',
         'order' => '',
         'limit' => ''
     ];
+
+    /**
+     * 数据库类型
+     * @var
+     */
     public $type;
 
-    public $query;
+    /**
+     * 数据库连接实例
+     * @var mixed|object|Connector
+     */
+    public Connector $query;
 
+    /**
+     * 数据库配置
+     * @var array|mixed|null
+     */
     protected ?array $config = null;
 
+    /**
+     * 不能被覆盖的构造方法
+     * Driver constructor.
+     * @param App $app
+     * @param $database
+     * @throws \Exception
+     */
     final public function __construct(App $app, $database)
     {
         $this->config = $app->config->get('database.' . $database);
         if (empty($this->config)) {
             throw new \Exception('没有找到数据库配置文件');
         }
-
+        //实例化数据库连接类
         $this->query = $app->make(Connector::class, [$this->dsn(), $this->config]);
         $this->collection = new Collection();
     }
 
     /**
-     * PDO连接DSN
+     * PDO连接DSN，待实现
      * @return string
      */
     abstract public function dsn(): string;
@@ -133,12 +175,22 @@ abstract class Driver
         return $this->collection;
     }
 
+    /**
+     * 设置数据集数据
+     * @param $data
+     * @param $query
+     */
     public function collection($data, $query)
     {
         $this->collection->data = $data;
         $this->collection->query = $query;
     }
 
+    /**
+     * 更新
+     * @param array $data
+     * @return int
+     */
     public function update(array $data)
     {
         $set = '';
@@ -155,7 +207,11 @@ abstract class Driver
             ->rowCount();
     }
 
-
+    /**
+     * 插入
+     * @param array $data
+     * @return string
+     */
     public function insert(array $data)
     {
         $fields = '(' . implode(',', array_keys($data)) . ')';
@@ -184,7 +240,7 @@ abstract class Driver
     /**
      * 设置查询字段
      * @param string|array $field
-     * @return \Yao\Database\Driver
+     * @return $this
      */
     public function field($field)
     {
@@ -193,13 +249,6 @@ abstract class Driver
         }
         $this->field = $field;
         return $this;
-
-
-//        if (is_string($field)) {
-//            $field = explode(',', $field);
-//        }
-//        $this->field = implode(',', $field);
-//        return $this;
     }
 
     protected function _checkWhereEmpty(\Closure $closure)
@@ -253,6 +302,11 @@ abstract class Driver
         });
     }
 
+    /**
+     * 判断字段是null
+     * @param array $field
+     * @return $this
+     */
     public function whereNull(array $field)
     {
         return $this->_checkWhereEmpty(function () use ($field) {
@@ -263,6 +317,11 @@ abstract class Driver
         });
     }
 
+    /**
+     * 判断字段不是null
+     * @param array $field
+     * @return $this
+     */
     public function whereNotNull(array $field)
     {
         return $this->_checkWhereEmpty(function () use ($field) {
@@ -273,6 +332,11 @@ abstract class Driver
         });
     }
 
+    /**
+     * 存在于数组
+     * @param array $whereIn
+     * @return $this
+     */
     public function whereIn(array $whereIn = [])
     {
         return $this->_checkWhereEmpty(function () use ($whereIn) {
@@ -287,16 +351,18 @@ abstract class Driver
     }
 
     /**
-     * @param $limit
-     * @param null $offset
-     * @return $this mixed
+     * limit待实现
+     * @param int $limit
+     * @param int|null $offset
+     * @return $this
      */
-    abstract public function limit($limit, $offset = null);
+    abstract public function limit(int $limit, ?int $offset = null);
 
     /**
      * order排序操作，支持多字段排序
      * @param array $order
      * 传入数组形式的排序字段，例如['id' => 'desc','name' => 'asc']
+     * @return $this
      */
     public function order(array $order = [])
     {
@@ -314,7 +380,7 @@ abstract class Driver
      * group by ... having 可以传入最多两个参数
      * @param mixed ...$group
      * 第一个参数为group字段，第二个为having
-     * @return null
+     * @return $this
      */
     public function group(...$group)
     {

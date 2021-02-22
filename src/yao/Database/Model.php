@@ -5,13 +5,14 @@ namespace Yao\Database;
 use Yao\Facade\Db;
 
 /**
- * @method where(array $where);
- * @method whereIn(array $whereIn);
- * @method whereLike(array $whereLike);
- * @method whereNull(array $whereNull);
- * @method whereNotNull(array $whereNotNull);
+ * @method Driver where(array $where);
+ * @method Driver whereIn(array $whereIn);
+ * @method Driver whereLike(array $whereLike);
+ * @method Driver whereNull(array $whereNull);
+ * @method Driver whereNotNull(array $whereNotNull);
+ * @method Driver limit(int $limit, ?int $offset);
  * @method insert(array $data);
- * @method field(string|array $fields)
+ * @method Driver field(string|array $fields)
  * Class Model
  * @package Yao
  */

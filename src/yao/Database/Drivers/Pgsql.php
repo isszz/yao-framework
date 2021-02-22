@@ -19,7 +19,7 @@ class Pgsql extends Driver
      * @param null $offset
      * @return $this
      */
-    public function limit($limit, $offset = null)
+    public function limit(int $limit, ?int $offset = null)
     {
         $this->_setLimit('LIMIT ' . $limit . ($offset ? ' OFFSET ' . $offset : ''));
         return $this;

@@ -59,7 +59,7 @@ class Config
     }*/
 
     /**
-     * 获取config配置中type对应的配置
+     * 获取config配置中default对应的配置
      * @param $config
      * 只需要传入配置文件名，例如database
      * @return mixed

@@ -15,6 +15,9 @@ use Yao\Concerns\SingleInstance;
 class Container implements ContainerInterface, \ArrayAccess
 {
 
+    /**
+     * 单例模式
+     */
     use SingleInstance;
 
     /**
@@ -31,6 +34,7 @@ class Container implements ContainerInterface, \ArrayAccess
 
     /**
      * 单例模式获取类实例
+     * 从static::$instances中实例，和依赖注入获取相同实例
      * @return static
      */
     public static function instance()
@@ -55,6 +59,7 @@ class Container implements ContainerInterface, \ArrayAccess
     }
 
     /**
+     * 获取存在的实例
      * @param string $id
      * 类的标识[完整类名]
      * @return mixed
@@ -116,10 +121,12 @@ class Container implements ContainerInterface, \ArrayAccess
     public function make(string $abstract, array $arguments = [], bool $singleInstance = true): object
     {
         $abstract = $this->_getBindClass($abstract);
+        //将参数处理成索引数组
         $arguments = array_values($arguments);
-        //非单例会强制刷新当前存在的单例实例
         if (!$singleInstance) {
+            //非单例会强制刷新当前存在的单例实例
             $this->remove($abstract);
+            //返回依赖注入后的实例
             return $this->_inject($abstract, $arguments);
         }
 
@@ -159,12 +166,14 @@ class Container implements ContainerInterface, \ArrayAccess
     private function _inject(string $abstract, array $arguments): object
     {
         $reflectionClass = new \ReflectionClass($abstract);
+        //构造方法不存在直接实例化
         if (null === ($constructor = $reflectionClass->getConstructor())) {
             return new $abstract(...$arguments);
         }
+        //构造方法为public
         if ($constructor->isPublic()) {
-            $parameters = $constructor->getParameters();
-            $injectClass = $this->_injectArguments($parameters, $arguments);
+            //通过构造方法的参数列表注入实例
+            $injectClass = $this->_injectArguments($constructor->getParameters(), $arguments);
             return new $abstract(...$injectClass);
         }
         throw new ContainerException('Cannot initialize class: ' . $abstract);
