@@ -13,16 +13,12 @@ namespace Yao\Facade;
  * @method static \Yao\Http\Route redirect(string $path, string $url, int $code = 200, array $requestMethod = ['get']) 路由重定向
  * @method static \Yao\Http\Route rule(string $uri, mixed $location, array $type = ['get', 'post'])
  * @method static \Yao\Http\Route source(string $uri, mixed $location)
- * @method static \Yao\Http\Route alias(string $alias)
  * @method static getRoute(string $requestMethod = null, string $requestPath = null)
  * Class Route
  * @package \Yao\Facade
  */
 class Route extends Facade
 {
-
-    protected static $singleInstance = true;
-
     protected static function getFacadeClass()
     {
         return 'route';

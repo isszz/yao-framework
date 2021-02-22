@@ -12,7 +12,7 @@ class View extends Facade
 
     protected static function getFacadeClass()
     {
-        return \Yao\View\Render::class;
+        return 'view';
     }
 
 }
