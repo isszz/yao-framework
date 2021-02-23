@@ -238,6 +238,11 @@ class Validate
         return true;
     }
 
+    public function throwAble(bool $throwAble = true)
+    {
+        $this->throwAble = $throwAble;
+        return $this;
+    }
 
     /**
      * 验证字符串的字符数
