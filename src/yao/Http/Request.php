@@ -298,7 +298,7 @@ class Request
                         $return[$value] = $default[$k];
                     }
                 } else {
-                    $return[$value] = $params[$value];
+                    $return[$value] = $this->_filter($params[$value]);
                 }
             }
             return $return;
