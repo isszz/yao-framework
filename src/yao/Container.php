@@ -222,8 +222,6 @@ class Container implements ContainerInterface, \ArrayAccess
             } else if (!empty($arguments)) {
                 //按顺序将非实例的参数存放到参数列表
                 $injectClass[] = array_shift($arguments);
-            } else {
-                throw new \Exception('InvalidArguments');
             }
         }
         return $injectClass;
