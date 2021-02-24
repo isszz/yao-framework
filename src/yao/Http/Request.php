@@ -291,14 +291,14 @@ class Request
                 $default = array_values($key);
                 $key = array_keys($key);
             }
-            //数字索引的时候有bug
+            //数字索引的时候有bug,这里仍然有bug，当为空字符串的时候
             foreach ($key as $k => $value) {
-                if (!isset($params[$value])) {
+                if (isset($params[$value]) && !empty($params[$value])) {
+                    $return[$value] = $this->_filter($params[$value]);
+                } else {
                     if (isset($default[$k])) {
                         $return[$value] = $default[$k];
                     }
-                } else {
-                    $return[$value] = $this->_filter($params[$value]);
                 }
             }
             return $return;
