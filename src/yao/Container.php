@@ -202,19 +202,28 @@ class Container implements ContainerInterface, \ArrayAccess
     }
 
     /**
-     * 通过参数列表获取注入对象数组
-     * @param $parameters
+     * 构造注入参数列表
+     * @param array $parameters
+     * 方法的参数列表
+     * @param array $arguments
+     * 给方法传递的参数
      * @return array
+     * @throws \Exception
      */
     protected function _injectArguments(array $parameters, array $arguments): array
     {
         //[DEBUG]所有注入的类都成了单例的了
         $injectClass = [];
         foreach ($parameters as $parameter) {
+            //如果是一个类
             if (!is_null($class = $parameter->getClass())) {
+                //使用容器实例化该类并存放到reject中
                 $injectClass[] = $this->make($class->getName(), [], true);
-            } else if (!empty($arguments) && !empty($arg = array_shift($arguments))) {
-                $injectClass[] = $arg;
+            } else if (!empty($arguments)) {
+                //按顺序将非实例的参数存放到参数列表
+                $injectClass[] = array_shift($arguments);
+            } else {
+                throw new \Exception('InvalidArguments');
             }
         }
         return $injectClass;
