@@ -90,7 +90,7 @@ class Error
     {
         $code = $exception->getCode() ?: 'Exception';
         $message = $exception->getMessage();
-        $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'Path' => $this->request->path(), 'ip' => $this->request->ip()]);
+        $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
         $return = $this->response;
         if ($this->debug) {
             $data = '<!DOCTYPE html>
@@ -123,7 +123,7 @@ class Error
      */
     public function error($code, $message, $file, $line, $errContext)
     {
-        $this->log->write('Error', $message, 'notice', ['Method' => $this->request->method(), 'Path' => $this->request->path(), 'ip' => $this->request->ip(), $code, $file, $line]);
+        $this->log->write('Error', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip(), $code, $file, $line]);
         throw new ErrorException($message, $code);
     }
 
@@ -134,7 +134,7 @@ class Error
     public function shutdown()
     {
         if ($error = error_get_last()) {
-            $this->log->write('Fetal', $error, 'notice', ['Method' => $this->request->method(), 'Path' => $this->request->path()]);
+            $this->log->write('Fetal', $error, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true)]);
             throw new \Exception($error);
         }
     }
