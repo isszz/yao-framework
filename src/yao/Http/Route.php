@@ -49,7 +49,8 @@ class Route
         'post' => [],
         'put' => [],
         'delete' => [],
-        'patch' => []
+        'patch' => [],
+        'head' => []
     ];
 
     /**
@@ -298,7 +299,7 @@ class Route
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
         }
-        return function () use($response) {
+        return function () use ($response) {
             return $this->app['middleware']->make($response, 'controller');
         };
     }
