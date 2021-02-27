@@ -2,14 +2,10 @@
 
 namespace Yao\Http;
 
-use Yao\Config;
 use Yao\Tools\Str;
 
 class Session
 {
-
-
-    protected bool $autostart;
 
     /**
      * 初始化session
@@ -52,7 +48,7 @@ class Session
      */
     public function has(string $key)
     {
-        return isset($_SESSION[$key]);
+        return !is_null(Str::parse($_SESSION, $key));
     }
 
     /**
