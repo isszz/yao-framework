@@ -104,21 +104,16 @@ class Response
         return $this;
     }
 
-    protected function create()
+    /**
+     * 响应执行
+     */
+    public function send()
     {
         $this->app->route->allowCors();
         foreach ($this->header as $header) {
             header($header);
         }
         http_response_code($this->code);
-    }
-
-    /**
-     * 响应执行
-     */
-    public function send()
-    {
-        $this->create();
         ob_end_flush();
         echo $this->data;
     }
