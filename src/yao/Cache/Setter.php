@@ -20,6 +20,11 @@ class Setter
         $this->driver = $app->make($driver, [$app->config->getDefault('cache')]);
     }
 
+    /**
+     * @param $cacheCommand
+     * @param $data
+     * @return mixed
+     */
     public function __call($cacheCommand, $data)
     {
         return $this->driver->$cacheCommand(...$data);
