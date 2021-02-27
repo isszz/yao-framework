@@ -27,7 +27,7 @@ abstract class Engine
      * 处理后的模板名
      * @var string
      */
-    protected $template;
+    protected string $template;
 
     /**
      * Driver constructor.
@@ -39,7 +39,10 @@ abstract class Engine
     {
         $this->config = $config->getDefault('view');
         $this->template = str_replace('/', DIRECTORY_SEPARATOR, $template) . '.' . $this->config['suffix'] ?: self::SUFFIX;
+        $this->init();
     }
+
+    abstract public function init();
 
     /**
      * 驱动实现方法

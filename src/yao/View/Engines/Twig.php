@@ -15,7 +15,7 @@ class Twig extends Engine
      */
     private Environment $twig;
 
-    private function _setOptions()
+    public function init()
     {
         $loader = new FilesystemLoader(env('views_path'));
         $this->twig = new Environment($loader, [
@@ -26,7 +26,6 @@ class Twig extends Engine
 
     public function render($arguments = [])
     {
-        $this->_setOptions();
         return $this->twig->render($this->template, $arguments);
     }
 }

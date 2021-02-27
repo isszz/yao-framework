@@ -16,7 +16,7 @@ class Smarty extends Engine
     /**
      * Smarty配置
      */
-    private function _setOptions()
+    public function init()
     {
         $this->smarty = new \Smarty();
         $this->smarty->debugging = $this->config['debug'];
@@ -36,7 +36,6 @@ class Smarty extends Engine
      */
     public function render($arguments = [])
     {
-        $this->_setOptions();
         foreach ($arguments as $key => $value) {
             $this->smarty->assign($key, $value);
         }
