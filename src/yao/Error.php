@@ -88,28 +88,36 @@ class Error
      */
     public function exception($exception)
     {
-        $code = $exception->getCode() ?: 'Exception';
+
+
+        $code = $exception->getCode() ?? 'Exception';
         $message = $exception->getMessage();
         $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
-        $return = $this->response;
         if ($this->debug) {
-            $data = '<!DOCTYPE html>
-            <html lang="zh">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>' . $message . '</title>
-            </head>
-            <body>
-            <b>Message:</b> ' . $message . '
-             <br><b>Code:</b>' . $code . '<br><b> File:</b> ' . $exception->getFile() . '<br ><b> Line:</b> ' . $exception->getLine() . '<pre style = "font-size:1.4em;margin-top: .5em" >' . $exception->getTraceAsString() . '</pre>
-            </body>
-            </html> ';
-            $return = $return->data($data);
+            echo '<pre style="font-size: 1.8em;width:80vw;display: block;margin: 0 auto;word-wrap: break-word;word-break: break-all;border:1px solid #e0e0e0;padding:.5em">';
+            echo '<p><b>Message: </b>' . $message . '</p>';
+            echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
+            echo '<p><b>Code: </b>' . $code . '</p>';
+            $trace = $exception->getTrace();
+            for ($key = 0; $key <= count($exception->getTrace()) - 2; $key++) {
+                echo '<p style="background-color: #1E90FF;color: white">' . $exception->getTrace()[$key]['file'] . ' +' . $trace[$key]['line'] . '</p>';
+                $line = $exception->getTrace()[$key]['line'];
+                $file = file($exception->getTrace()[$key]['file']);
+                $function = $exception->getTrace()[$key]['function'];
+                for ($i = $line - 4; $i < $line + 4 && $i < count($file); $i++) {
+                    $code = $file[$i];
+                    echo $i + 1;
+                    if ($i + 1 == $line) {
+                        $code = str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]);
+                    }
+                    echo $code;
+                }
+            }
+            echo '</pre>';
         } else {
             include_once $this->exceptionView;
         }
-        $return->code((int)$exception->getCode())->send();
+        return $this->response->code((int)$code)->send();
     }
 
     /**
