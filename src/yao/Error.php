@@ -94,26 +94,26 @@ class Error
         $message = $exception->getMessage();
         $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
         if ($this->debug) {
-            echo '<pre style="font-size: 1.8em;width:80vw;display: block;margin: 0 auto;word-wrap: break-word;word-break: break-all;border:1px solid #e0e0e0;padding:.5em">';
-            echo '<p><b>Message: </b>' . $message . '</p>';
+            echo '<meta name="viewport"  content="width=device-width, initial-scale=1.0"><body style="width:90vw;margin: 0 auto;border:1px solid #d5d1d1;margin: .5em auto"><div style="background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Message: ' . $message . '</div><pre style="margin-top:0;padding:.5em;font-size: 1.5em;display: block;word-wrap: break-word;word-break: break-all;white-space:break-spaces">';
+            echo '';
             echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
             echo '<p><b>Code: </b>' . $code . '</p>';
             $trace = $exception->getTrace();
             for ($key = 0; $key <= count($exception->getTrace()) - 2; $key++) {
-                echo '<p style="background-color: #1E90FF;color: white">' . $exception->getTrace()[$key]['file'] . ' +' . $trace[$key]['line'] . '</p>';
+                echo '<p style="background-color: #65adf3;color: white">' . $exception->getTrace()[$key]['file'] . ' +' . $trace[$key]['line'] . '</p>';
                 $line = $exception->getTrace()[$key]['line'];
                 $file = file($exception->getTrace()[$key]['file']);
                 $function = $exception->getTrace()[$key]['function'];
-                for ($i = $line - 4; $i < $line + 4 && $i < count($file); $i++) {
+                for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
                     $code = $file[$i];
-                    echo $i + 1;
+                    echo '<span style="background-color: #EEEEEE;color: grey">' . ($i + 1) . '</span>';
                     if ($i + 1 == $line) {
-                        $code = str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]);
+                        $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]) . '</text>';
                     }
                     echo $code;
                 }
             }
-            echo '</pre>';
+            echo '</pre><div style="text-align:right;background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Yao - 一款轻量的PHP框架！<a href="https://github.com/topyao/yao">Github</a>&nbsp;&nbsp<a href="https://packagist.org/packages/chengyao/yao">Packagist</a></div></body>';
         } else {
             include_once $this->exceptionView;
         }
