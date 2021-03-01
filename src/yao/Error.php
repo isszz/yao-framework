@@ -106,7 +106,7 @@ class Error
                 $function = $exception->getTrace()[$key]['function'];
                 for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
                     $code = $file[$i];
-                    echo '<span style="background-color: #EEEEEE;color: grey">' . ($i + 1) . '</span>';
+                    echo '<span style="background-color: #EEEEEE;color: grey">' . str_pad((string)($i + 1), 3, ' ', STR_PAD_BOTH) . '</span>';
                     if ($i + 1 == $line) {
                         $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]) . '</text>';
                     }

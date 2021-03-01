@@ -75,6 +75,5 @@ class App extends Container
             $this['middleware']->make(function () {
                 return $this->route->dispatch();
             }, 'global'))->send();
-//        $this->route->dispatch();
     }
 }
