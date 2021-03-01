@@ -6,6 +6,7 @@ namespace Yao\Cache;
 use Yao\App;
 
 /**
+ * @method get(string $key) 查询缓存
  * Class Setter
  * @package Yao\Cache
  */
