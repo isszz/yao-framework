@@ -20,7 +20,7 @@
       "src/helper.php"
     ],
     "psr-4": {
-      "Yao\\": "src/yao/"
+      "Yao\\": "src/Yao/"
     }
   },
   "require": {
