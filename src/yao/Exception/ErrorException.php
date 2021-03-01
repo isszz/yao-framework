@@ -13,9 +13,4 @@ class ErrorException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    public function __toString()
-    {
-        parent::__toString();
-        return $this->getMessage();
-    }
 }

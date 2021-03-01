@@ -98,12 +98,14 @@ class Error
             echo '';
             echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
             echo '<p><b>Code: </b>' . $code . '</p>';
-            $trace = $exception->getTrace();
             for ($key = 0; $key <= count($exception->getTrace()) - 2; $key++) {
-                echo '<p style="background-color: #65adf3;color: white">' . $exception->getTrace()[$key]['file'] . ' +' . $trace[$key]['line'] . '</p>';
-                $line = $exception->getTrace()[$key]['line'];
+                $errorFile = $exception->getTrace()[$key]['file'];
+
+
                 $file = file($exception->getTrace()[$key]['file']);
+                $line = $exception->getTrace()[$key]['line'];
                 $function = $exception->getTrace()[$key]['function'];
+                echo '<p style="background-color: #65adf3;color: white">' . $errorFile . ' +' . $line . '</p>';
                 for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
                     $code = $file[$i];
                     echo '<span style="background-color: #EEEEEE;color: grey">' . str_pad((string)($i + 1), 3, ' ', STR_PAD_BOTH) . '</span>';
