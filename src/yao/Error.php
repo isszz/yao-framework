@@ -115,7 +115,7 @@ class Error
                     echo $code;
                 }
             }
-            echo '</pre><div style="text-align:right;background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Yao - 一款轻量的PHP框架！<a href="https://github.com/topyao/yao">Github</a>&nbsp;&nbsp<a href="https://packagist.org/packages/chengyao/yao">Packagist</a></div></body>';
+            echo '</pre><div style="text-align:right;background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Yao&nbsp;&nbsp;<a href="https://github.com/topyao/yao">Github</a>&nbsp;&nbsp<a href="https://packagist.org/packages/chengyao/yao">Packagist</a></div></body>';
         } else {
             include_once $this->exceptionView;
         }
