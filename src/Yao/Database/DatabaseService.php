@@ -2,15 +2,18 @@
 
 namespace {
 
+    use Yao\Database\Driver;
+    use Yao\Facade\Db;
+
     if (false === function_exists('db')) {
         /**
-         * Db类助手函数
+         * db类助手函数
          * @param string $tableName
-         * @return \Yao\Db
+         * @return Driver
          */
         function db(string $tableName)
         {
-            return \Yao\Facade\Db::name($tableName);
+            return Db::name($tableName);
         }
     }
 

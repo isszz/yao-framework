@@ -88,8 +88,6 @@ class Error
      */
     public function exception($exception)
     {
-
-
         $code = $exception->getCode() ?? 'Exception';
         $message = $exception->getMessage();
         $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
@@ -98,13 +96,12 @@ class Error
             echo '';
             echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
             echo '<p><b>Code: </b>' . $code . '</p>';
-            for ($key = 0; $key <= count($exception->getTrace()) - 2; $key++) {
-                $errorFile = $exception->getTrace()[$key]['file'];
-
-
-                $file = file($exception->getTrace()[$key]['file']);
-                $line = $exception->getTrace()[$key]['line'];
-                $function = $exception->getTrace()[$key]['function'];
+            $trace = $exception->getTrace();
+            for ($key = 0; $key <= count($trace) - 2; $key++) {
+                $errorFile = $trace[$key]['file'];
+                $file = file($trace[$key]['file']);
+                $line = $trace[$key]['line'];
+                $function = $trace[$key]['function'];
                 echo '<p style="background-color: #65adf3;color: white">' . $errorFile . ' +' . $line . '</p>';
                 for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
                     $code = $file[$i];
