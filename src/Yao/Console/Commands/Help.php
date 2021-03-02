@@ -12,7 +12,7 @@ class Help extends Command
         echo <<<EOT
 (1). 启动服务[php yao serve]
 (2). 数据操作[暂时不支持]
-(3). 路由操作[php yao route]
+(3). 路由操作[php yao route] 重大bug，暂时不要使用
 (4). 退出
 输入选项<1,2,3>：
 EOT;
