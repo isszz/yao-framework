@@ -10,7 +10,8 @@ namespace Yao\Concerns;
  */
 trait SingleInstance
 {
-    private static $instance;
+
+    protected static ?object $instance;
 
     private function __construct()
     {
