@@ -280,7 +280,7 @@ class Validate
         $true = ['on', 'yes', 'true', true, 1, '1'];
         $false = ['off', 'no', 'false', false, 0, '0'];
         $limit = $limit ? 'true' : 'false';
-        if (in_array($data, $$limit, 1)) {
+        if (in_array(strtolower($data), $$limit, true)) {
             return true;
         }
         $this->message[] = $this->notice[$field][$regulation] ?? $field . '不为' . $limit;
