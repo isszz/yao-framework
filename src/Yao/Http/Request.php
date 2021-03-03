@@ -222,10 +222,14 @@ class Request
      */
     public function post($key = null, $default = null)
     {
-        return $this->_request($_POST ?: $this->_raw(), $key, $default);
+        return $this->_request($_POST, $key, $default);
     }
 
-    public function _raw()
+    /**
+     * 获取提交的原始数据
+     * @return false|string
+     */
+    public function raw()
     {
         return file_get_contents('php://input');
     }
@@ -247,11 +251,11 @@ class Request
      * @param null $default
      * @return array|string|null
      */
-    public function put($field = null, $default = null)
-    {
-        parse_str($this->_raw(), $_PUT);
-        return $this->_request($_PUT, $field, $default);
-    }
+//    public function put($field = null, $default = null)
+//    {
+//        parse_str($this->_raw(), $_PUT);
+//        return $this->_request($_PUT, $field, $default);
+//    }
 
     /**
      * debug $_FILES 获取方法
