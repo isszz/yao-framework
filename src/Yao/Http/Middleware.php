@@ -79,18 +79,18 @@ class Middleware
                 throw new \Exception('不能调度中间件');
         }
 //        return $this->pipeline($dispatch, $request);
-        $return = $request;
+//        $return = $request;
         if (!empty($dispatch)) {
             foreach ($dispatch as $middleware) {
                 //暂时去掉闭包
 //                $return = function () use($middleware,$request) {
-                $return = (new $middleware())->handle($request, function ($request) {
+                $request = (new $middleware())->handle($request, function ($request) {
                     return $request;
                 });
 //                };
             }
         }
-        return $return;
+        return $request;
     }
 
     public function pipeline($array, $request)
