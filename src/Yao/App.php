@@ -70,10 +70,11 @@ class App extends Container
         $this->bind = array_merge((array)$this->config->get('app.alias'), $this->bind);
         //注册路由
         $this['route']->register();
-        //发送响应
+        //发送响应,如果全局中间件不起作用可以给data中的参数改成闭包
         return $this->response->data(
-            $this['middleware']->make(function () {
-                return $this->route->dispatch();
-            }, 'global'))->send();
+            $this['middleware']->make(
+                $this->route->dispatch()
+                , 'global'))
+            ->send();
     }
 }
