@@ -82,11 +82,12 @@ class Middleware
         $return = $request;
         if (!empty($dispatch)) {
             foreach ($dispatch as $middleware) {
-                $return = function () use($middleware,$request) {
-                    return (new $middleware())->handle($request, function ($request) {
-                        return $request;
-                    });
-                };
+                //暂时去掉闭包
+//                $return = function () use($middleware,$request) {
+                $return = (new $middleware())->handle($request, function ($request) {
+                    return $request;
+                });
+//                };
             }
         }
         return $return;
