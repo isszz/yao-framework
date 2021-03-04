@@ -283,9 +283,7 @@ class Route
             $this->controller = $dispatch;
         }
 
-        return $this->app['middleware']->make(function () {
-            return $this->_dispatch();
-        }, 'route');
+        return $this->app['middleware']->make($this->_dispatch(), 'route');
 
     }
 
