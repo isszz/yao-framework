@@ -92,8 +92,7 @@ class Error
         $message = $exception->getMessage();
         $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
         if ($this->debug) {
-            echo '<meta name="viewport"  content="width=device-width, initial-scale=1.0"><body style="width:90vw;margin: 0 auto;border:1px solid #d5d1d1;margin: .5em auto"><div style="background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Message: ' . $message . '</div><pre style="margin-top:0;padding:.5em;font-size: 1.5em;display: block;word-wrap: break-word;word-break: break-all;white-space:break-spaces">';
-            echo '';
+            echo '<title> ' . $message . '</title><meta name="viewport"  content="width=device-width, initial-scale=1.0"><body style="width:90vw;margin: 0 auto;border:1px solid #d5d1d1;margin: .5em auto"><div style="background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Message: ' . $message . '</div><pre style="margin-top:0;padding:.5em;font-size: 1.5em;display: block;word-wrap: break-word;word-break: break-all;white-space:break-spaces">';
             echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
             echo '<p><b>Code: </b>' . $code . '</p>';
             $trace = $exception->getTrace();
