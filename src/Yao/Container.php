@@ -54,8 +54,7 @@ class Container implements ContainerInterface, \ArrayAccess
      */
     public function set(string $abstract, object $instance): void
     {
-        $abstract = $this->_getBindClass($abstract);
-        static::$instances[$abstract] = $instance;
+        static::$instances[$this->_getBindClass($abstract)] = $instance;
     }
 
     /**
@@ -81,8 +80,7 @@ class Container implements ContainerInterface, \ArrayAccess
      */
     public function has($id)
     {
-        $abstract = $this->_getBindClass($id);
-        return isset(static::$instances[$abstract]);
+        return isset(static::$instances[$this->_getBindClass($id)]);
     }
 
     /**
@@ -129,11 +127,9 @@ class Container implements ContainerInterface, \ArrayAccess
             //返回依赖注入后的实例
             return $this->_inject($abstract, $arguments);
         }
-
         if (!$this->has($abstract)) {
             $this->set($abstract, $this->_inject($abstract, $arguments));
         }
-
         return $this->get($abstract);
     }
 
@@ -194,10 +190,15 @@ class Container implements ContainerInterface, \ArrayAccess
      */
     public function invokeMethod(array $callable, $arguments = [], bool $singleInstance = true, $constructorParameters = [])
     {
+        //取得完整类名和方法
         [$abstract, $method] = [$this->_getBindClass($callable[0]), $callable[1]];
+        //获取容器中的实例
         $instance = $this->make($abstract, (array)$constructorParameters, $singleInstance);
+        //获取要调用的参数列表
         $parameters = (new \ReflectionClass($abstract))->getMethod($method)->getParameters();
+        //注入参数
         $injectClass = $this->_injectArguments($parameters, (array)$arguments);
+        //调用方法
         return $instance->$method(...$injectClass);
     }
 
