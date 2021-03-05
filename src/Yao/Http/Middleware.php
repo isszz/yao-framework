@@ -64,24 +64,24 @@ class Middleware
 
     public function make($request, $type)
     {
-        $dispatch = [];
+        $middlewares = [];
         switch ($type) {
             case 'route':
-                $dispatch = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
+                $middlewares = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
                 break;
             case 'controller':
-                $dispatch = $this->getController();
+                $middlewares = $this->getController();
                 break;
             case 'global':
-                $dispatch = (array)$this->app->config->get('app.middleware');
+                $middlewares = (array)$this->app->config->get('app.middleware');
                 break;
             default:
                 throw new \Exception('不能调度中间件');
         }
 //        return $this->pipeline($dispatch, $request);
 //        $return = $request;
-        if (!empty($dispatch)) {
-            foreach ($dispatch as $middleware) {
+        if (!empty($middlewares)) {
+            foreach ($middlewares as $middleware) {
                 //暂时去掉闭包
 //                $return = function () use($middleware,$request) {
                 $request = (new $middleware())->handle($request, function ($request) {

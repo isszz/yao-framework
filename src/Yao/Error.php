@@ -88,34 +88,38 @@ class Error
      */
     public function exception($exception)
     {
-        $code = $exception->getCode() ?? 'Exception';
-        $message = $exception->getMessage();
-        $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
-        if ($this->debug) {
-            echo '<title> ' . $message . '</title><meta name="viewport"  content="width=device-width, initial-scale=1.0"><body style="width:90vw;border:1px solid #d5d1d1;margin: .5em auto"><div style="background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Message: ' . $message . '</div><pre style="margin-top:0;padding:0 1em;font-size: 1.5em;display: block;word-wrap: break-word;word-break: break-all;white-space:break-spaces">';
-            echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
-            echo '<p><b>Code: </b>' . $code . '</p>';
-            $trace = $exception->getTrace();
-            for ($key = 0; $key <= count($trace) - 2; $key++) {
-                $errorFile = $trace[$key]['file'];
-                $file = file($trace[$key]['file']);
-                $line = $trace[$key]['line'];
-                $function = $trace[$key]['function'];
-                echo '<p style="background-color: #65adf3;color: white">' . $errorFile . ' +' . $line . '</p>';
-                for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
-                    $code = $file[$i];
-                    echo '<span style="background-color: #EEEEEE;color: grey">' . str_pad((string)($i + 1), 3, ' ', STR_PAD_BOTH) . '</span>';
-                    if ($i + 1 == $line) {
-                        $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]) . '</text>';
+        try {
+            $code = $exception->getCode() ?? 'Exception';
+            $message = $exception->getMessage();
+            $this->log->write('Exception', $message, 'notice', ['Method' => $this->request->method(), 'URL' => $this->request->url(true), 'ip' => $this->request->ip()]);
+            if ($this->debug) {
+                echo '<title> ' . $message . '</title><meta name="viewport"  content="width=device-width, initial-scale=1.0"><body style="width:90vw;border:1px solid #d5d1d1;margin: .5em auto"><div style="background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Message: ' . $message . '</div><pre style="margin-top:0;padding:0 1em;font-size: 1.5em;display: block;word-wrap: break-word;word-break: break-all;white-space:break-spaces">';
+                echo '<p><b>File: </b>' . $exception->getFile() . ' +' . $exception->getLine() . '</p>';
+                echo '<p><b>Code: </b>' . $code . '</p>';
+                $trace = $exception->getTrace();
+                for ($key = 0; $key <= count($trace) - 2; $key++) {
+                    $errorFile = $trace[$key]['file'];
+                    $file = file($trace[$key]['file']);
+                    $line = $trace[$key]['line'];
+                    $function = $trace[$key]['function'];
+                    echo '<p style="background-color: #65adf3;color: white">' . $errorFile . ' +' . $line . '</p>';
+                    for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
+                        $code = $file[$i];
+                        echo '<span style="background-color: #EEEEEE;color: grey">' . str_pad((string)($i + 1), 3, ' ', STR_PAD_BOTH) . '</span>';
+                        if ($i + 1 == $line) {
+                            $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]) . '</text>';
+                        }
+                        echo $code;
                     }
-                    echo $code;
                 }
+                echo '</pre><div style="text-align:right;background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Yao&nbsp;&nbsp;<a href="https://github.com/topyao/yao">Github</a>&nbsp;&nbsp<a href="https://packagist.org/packages/chengyao/yao">Packagist</a></div></body>';
+            } else {
+                include_once $this->exceptionView;
             }
-            echo '</pre><div style="text-align:right;background-color: #1E90FF;line-height:3em;padding:0 1em;height: 3em;color: white;font-weight: bold">Yao&nbsp;&nbsp;<a href="https://github.com/topyao/yao">Github</a>&nbsp;&nbsp<a href="https://packagist.org/packages/chengyao/yao">Packagist</a></div></body>';
-        } else {
-            include_once $this->exceptionView;
+            return $this->response->code((int)$code)->send();
+        } catch (\Exception $e) {
+            //暂时屏蔽一部分错误
         }
-        return $this->response->code((int)$code)->send();
     }
 
     /**

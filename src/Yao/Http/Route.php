@@ -290,15 +290,15 @@ class Route
     private function _dispatch()
     {
         if ($this->controller instanceof \Closure) {
-            $response = $this->controller;
+            $request = $this->controller;
         } else if (is_string($this->controller)) {
             $this->app->make($this->controller);
-            $response = function () {
+            $request = function () {
                 return $this->app->invokeMethod([$this->controller, $this->action], $this->param);
             };
         }
 //        return function () use ($response) {
-        return $this->app['middleware']->make($response, 'controller');
+        return $this->app['middleware']->make($request, 'controller');
 //        };
     }
 
