@@ -80,9 +80,9 @@ class Middleware
         }
         if (!empty($middlewares)) {
             foreach ($middlewares as $middleware) {
-                $request = (new $middleware())->handle($request, function ($request) {
+                $request = $this->app->invokeMethod([$middleware, 'handle'], [$request, function ($request) {
                     return $request;
-                });
+                }], false);
             }
         }
         return $request;
