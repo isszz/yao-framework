@@ -192,14 +192,24 @@ class Container implements ContainerInterface, \ArrayAccess
     {
         //取得完整类名和方法
         [$abstract, $method] = [$this->_getBindClass($callable[0]), $callable[1]];
-        //获取容器中的实例
-        $instance = $this->make($abstract, (array)$constructorParameters, $singleInstance);
-        //获取要调用的参数列表
-        $parameters = (new \ReflectionClass($abstract))->getMethod($method)->getParameters();
-        //注入参数
-        $injectClass = $this->_injectArguments($parameters, (array)$arguments);
-        //调用方法
-        return $instance->$method(...$injectClass);
+        //反射获取方法
+        $reflectionMethod = (new \ReflectionClass($abstract))->getMethod($method);
+        //获取方法的参数列表
+        $parameters = $reflectionMethod->getParameters();
+        //生成注入后的参数
+        $injectArguments = $this->_injectArguments($parameters, (array)$arguments);
+        //公共方法
+        if ($reflectionMethod->isPublic()) {
+            //静态方法调用
+            if ($reflectionMethod->isStatic()) {
+                return $abstract::$method(...$injectArguments);
+            } else {
+                $instance = $this->make($abstract, (array)$constructorParameters, $singleInstance);
+                //调用方法
+                return $instance->$method(...$injectArguments);
+            }
+        }
+        throw new \Exception('Unable to call function: ' . $method);
     }
 
     /**
@@ -214,18 +224,18 @@ class Container implements ContainerInterface, \ArrayAccess
     protected function _injectArguments(array $parameters, array $arguments): array
     {
         //[DEBUG]所有注入的类都成了单例的了
-        $injectClass = [];
+        $injectArguments = [];
         foreach ($parameters as $parameter) {
             //如果是一个类,这里可能需要对闭包进行注入
             if (!is_null($class = $parameter->getClass()) && 'Closure' !== $class->getName()) {
                 //使用容器实例化该类并存放到reject中
-                $injectClass[] = $this->make($class->getName(), [], true);
+                $injectArguments[] = $this->make($class->getName(), [], true);
             } else if (!empty($arguments)) {
                 //按顺序将非实例的参数存放到参数列表
-                $injectClass[] = array_shift($arguments);
+                $injectArguments[] = array_shift($arguments);
             }
         }
-        return $injectClass;
+        return $injectArguments;
     }
 
     public function offsetExists($offset)
