@@ -216,8 +216,8 @@ class Container implements ContainerInterface, \ArrayAccess
         //[DEBUG]所有注入的类都成了单例的了
         $injectClass = [];
         foreach ($parameters as $parameter) {
-            //如果是一个类
-            if (!is_null($class = $parameter->getClass())) {
+            //如果是一个类,这里可能需要对闭包进行注入
+            if (!is_null($class = $parameter->getClass()) && 'Closure' !== $class->getName()) {
                 //使用容器实例化该类并存放到reject中
                 $injectClass[] = $this->make($class->getName(), [], true);
             } else if (!empty($arguments)) {
