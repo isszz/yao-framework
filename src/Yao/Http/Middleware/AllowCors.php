@@ -3,14 +3,13 @@
 namespace Yao\Http\Middleware;
 
 use Yao\App;
-use Yao\Contracts\Middleware;
 use Yao\Http\Route\Cors;
 
-class AllowCors implements Middleware
+class AllowCors
 {
-    public function handle($request, \Closure $next)
+    public function handle($request, \Closure $next, App $app)
     {
-        App::instance()[Cors::class]->allow();
+        $app[Cors::class]->allow();
         return $next($request);
     }
 
