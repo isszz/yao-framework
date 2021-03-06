@@ -106,9 +106,10 @@ class Error
         background-color: #1E90FF;
         line-height:3em;
         padding:0 1em;
-        height: 3em;
+        min-height: 3em;
         color: white;
-        font-weight: bold
+        font-weight: bold;
+        word-break: break-all;
     }
     pre{
         margin-top:0;
