@@ -76,24 +76,6 @@ class Response
     }
 
     /**
-     * 跨域支持，该方法目前不可用
-     * @param $allows
-     * @return $this
-     */
-    public function cors($allows)
-    {
-        $origin = $allows['origin'] ?? $this->app->config->get('cors.origin');
-        $credentials = $allows['credentials'] ?? ($this->app->config->get('cors.credentials') ? 'true' : 'false');
-        $headers = $allows['headers'] ?? $this->app->config->get('cors.headers');
-        $this->header([
-            'Access-Control-Allow-Origin:' . $origin,
-            'Access-Control-Allow-Credentials:' . $credentials,
-            'Access-Control-Allow-Headers:' . $headers
-        ]);
-        return $this;
-    }
-
-    /**
      * 设置响应头
      * @param null|string|array $header
      * @return $this
@@ -109,18 +91,17 @@ class Response
      */
     public function send()
     {
-        $this->app->route->allowCors();
         foreach ($this->header as $header) {
             header($header);
         }
         http_response_code($this->code);
-        ob_end_flush();
         echo $this->data;
+        ob_end_flush();
     }
 
     public function __destruct()
     {
-        $this->app->event->trigger('response_sent');
+        $this->app['event']->trigger('response_sent');
     }
 
 }
