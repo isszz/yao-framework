@@ -4,7 +4,8 @@ namespace Yao\Facade;
 
 /**
  * @method static \Yao\Http\Response data($data)
- * @method static get(string $key = null, $default = null)
+ * @method static \Yao\Http\Response code(int $code)
+ * @method static \Yao\Http\Response header(string|array $header)
  * Class Config
  * @package Yao\Facade
  */
