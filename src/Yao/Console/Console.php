@@ -27,6 +27,7 @@ class Console
     protected array $register = [
         'serve' => Commands\Serve::class,
         'route' => Commands\Route::class,
+        'make' => Commands\Make::class
     ];
 
     public function __construct($argv)
