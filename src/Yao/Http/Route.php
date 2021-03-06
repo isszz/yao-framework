@@ -7,6 +7,7 @@ namespace Yao\Http;
 use Yao\App;
 use Yao\Config;
 use Yao\Exception\RouteNotFoundException;
+use Yao\Http\Route\Cors;
 
 /**
  * 路由操作类
@@ -209,22 +210,10 @@ class Route
      * 允许的头信息
      * @return $this
      */
-    public function cors($allowOrigin = null, ?bool $allowCredentials = null, $allowHeaders = null, $allowAge = 600): Route
+    public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'get,post,put'): Route
     {
-        //需要判断是否存在配置，不存在则默认
-        $cors = $this->config->get('cors');
-        $allowOrigin || $allowOrigin = $cors['origin'];
-        $allowHeaders || $allowHeaders = $cors['headers'];
-        $allowAge || $allowAge = $cors['max_age'];
-        isset($allowCredentials) || $allowCredentials = $cors['credentials'];
-        $allowCredentials = $allowCredentials ? 'true' : 'false';
-        foreach ((array)$this->method as $method) {
-            $this->routes[$method][$this->path]['cors'] = [
-                'origin' => $allowOrigin,
-                'credentials' => $allowCredentials,
-                'headers' => $allowHeaders
-            ];
-        }
+        //布尔被自动转为1了
+        $this->app[Cors::class]->set($this->method, $this->path, ['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . $method, 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
         return $this;
     }
 
@@ -238,7 +227,6 @@ class Route
 
     public function dispatch()
     {
-        $this->allowCors();
         $method = $this->request->method();
         $path = $this->request->path();
         $dispatch = null;
@@ -298,37 +286,6 @@ class Route
             };
         }
         return $this->app['middleware']->make($request, 'controller');
-    }
-
-
-    /**
-     * 跨域支持
-     */
-    public function allowCors()
-    {
-        if (isset($this->routes[$this->request->method()][$this->request->path()]['cors'])) {
-            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
-            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
-            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
-            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
-            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
-            header('Access-Control-Allow-Origin:' . $origin);
-            header('Access-Control-Allow-Credentials:' . $credentials);
-            header('Access-Control-Allow-Headers:' . $headers);
-            header('Access-Control-Max-Age:' . $age);
-        } else if ('options' == $this->request->method()) {
-            //需要优化下，解决了其他请求方式下的跨域问题
-            $allows = $this->routes[$this->request->method()][$this->request->path()]['cors'];
-            $origin = $allows['origin'] ?? $this->config->get('cors.origin');
-            $credentials = $allows['credentials'] ?? ($this->config->get('cors.credentials') ? 'true' : 'false');
-            $headers = $allows['headers'] ?? $this->config->get('cors.headers');
-            $age = $allows['max_age'] ?? $this->config->get('cors.max_age');
-            header('Access-Control-Allow-Origin:' . $origin);
-            header('Access-Control-Allow-Credentials:' . $credentials);
-            header('Access-Control-Max-Age:' . $age);
-            header('Access-Control-Allow-Headers:' . $headers, true, 204);
-            exit;
-        }
     }
 
     private function hasRoute($method, $path)

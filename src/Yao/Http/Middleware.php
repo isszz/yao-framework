@@ -78,34 +78,29 @@ class Middleware
             default:
                 throw new \Exception('不能调度中间件');
         }
-//        return $this->pipeline($dispatch, $request);
-//        $return = $request;
         if (!empty($middlewares)) {
             foreach ($middlewares as $middleware) {
-                //暂时去掉闭包
-//                $return = function () use($middleware,$request) {
                 $request = (new $middleware())->handle($request, function ($request) {
                     return $request;
                 });
-//                };
             }
         }
         return $request;
     }
 
-    public function pipeline($array, $request)
-    {
-        static $return;
-        if (!empty($array)) {
-            $middleware = array_shift($array);
-            $return = function () use ($request, $middleware) {
-                return (new $middleware())->handle($request, function ($request) {
-                    return $request;
-                });
-            };
-            return $this->pipeline($array, $return);
-        }
-        return $return;
-    }
+//    public function pipeline($array, $request)
+//    {
+//        static $return;
+//        if (!empty($array)) {
+//            $middleware = array_shift($array);
+//            $return = function () use ($request, $middleware) {
+//                return (new $middleware())->handle($request, function ($request) {
+//                    return $request;
+//                });
+//            };
+//            return $this->pipeline($array, $return);
+//        }
+//        return $return;
+//    }
 
 }
