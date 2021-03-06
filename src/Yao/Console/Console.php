@@ -32,6 +32,9 @@ class Console
 
     public function __construct($argv)
     {
+        if (!function_exists('passthru')) {
+            exit('环境不支持passthru函数，请取消禁用！');
+        }
         if (!isset($argv[1])) {
             exit((new Help())->out());
         }
