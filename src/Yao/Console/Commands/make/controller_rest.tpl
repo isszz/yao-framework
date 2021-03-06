@@ -2,18 +2,34 @@
 
 namespace {{namespace}};
 
-class {{class}}{
+use App\Http\Controller;
 
-    public function index(){
+class {{class}} extends Controller {
 
-    }
-
-    public function create($data){
-
-    }
-
-    public function delete($id){
+    public function index()
+    {
 
     }
 
+    public function create($data)
+    {
+
+    }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function add(){
+
+    }
+
+    public function update(){
+
+    }
+
+    public function edit(){
+
+    }
 }
