@@ -3,11 +3,9 @@
 
 namespace Yao\Http\Route;
 
-use Yao\Facade\Config;
-use Yao\Facade\Request;
-use Yao\Route\Route;
-use Yao\Route\Rule;
-use Yao\Concerns\SingleInstance;
+use Yao\App;
+use Yao\Http\Request;
+use Yao\Http\Response;
 
 /**
  * 跨域支持类
@@ -16,44 +14,45 @@ use Yao\Concerns\SingleInstance;
  */
 class Cors
 {
-    use SingleInstance;
+
+    protected App $app;
+
+    protected Request $request;
+
+    protected Response $response;
 
     protected array $cors = [];
 
-    private function __construct()
+    protected array $defaultRule = [];
+
+    public function __construct(App $app)
     {
-        $this->cors = Config::get('cors');
+        $this->app = $app;
+        $this->request = $app['request'];
+        $this->response = $app['response'];
+        $this->defaultRule = $app->config->get('cors');
     }
 
-    public function allowCors()
+    public function allow()
     {
-        if (isset($this->routes['options'][Request::path()])) {
-            header('Access-Control-Allow-Methods', 'get');
-            header('Access-Control-Allow-Origin:' . $this->routes['options'][Request::path()]['originUrl']);
-            header('Access-Control-Allow-Credentials:true');
-            header('Access-Control-Allow-Headers:Origin,Content-Type,Accept,token,X-Requested-With');
+        if ($this->request->isMethod('options')) {
+            return $this->response
+                ->header($this->cors[$this->request->method()][$this->request->path()])
+                ->code(204)
+                ->send();
+        }
+        if (isset($this->cors[$this->request->method()][$this->request->path()])) {
+            return $this->response
+                ->header($this->cors[$this->request->method()][$this->request->path()]);
         }
     }
 
 
-    public function cross($AllowOrigin = null, $AllowCredentials = null, $AllowHeaders = null): Route
+    public function set($methods, $path, $options)
     {
-        if (is_array($this->method)) {
-            foreach ($this->method as $method) {
-                $this->routes[$method][$this->path]['cors'] = [
-                    'origin' => $AllowOrigin,
-                    'credential' => $AllowCredentials,
-                    'header' => $AllowHeaders
-                ];
-            }
-        } else {
-            $this->routes[$this->method][$this->path]['cors'] = [
-                'origin' => $AllowOrigin,
-                'credential' => $AllowCredentials,
-                'header' => $AllowHeaders
-            ];
+        foreach ((array)$methods as $method) {
+            $this->cors[$method][$path] = $options;
         }
-        return $this;
     }
 
 }
