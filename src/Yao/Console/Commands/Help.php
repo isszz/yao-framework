@@ -11,14 +11,14 @@ class Help extends Command
     {
         echo <<<EOT
 (1). 启动服务[php yao serve]
-(2). 数据操作[暂时不支持]
+(2). 新建资源
 (3). 路由操作[php yao route] 重大bug，暂时不要使用
 (4). 退出
 输入选项<1,2,3>：
 EOT;
-        $command = [
+        $commandsMap = [
             1 => 'php yao serve',
-            2 => 'help',
+            2 => 'php yao make',
             3 => 'php yao route',
         ];
         while (1) {
@@ -26,8 +26,8 @@ EOT;
             if (4 == $options) {
                 exit;
             }
-            if (array_key_exists($options, $command)) {
-                passthru($command[$options]);
+            if (array_key_exists($options, $commandsMap)) {
+                passthru($commandsMap[$options]);
                 exit;
             } else {
                 echo "输入错误！重新输入<CTRL+C退出>：";
