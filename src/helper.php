@@ -44,7 +44,7 @@ if (false === function_exists('view')) {
      * @param array $params 需要渲染给模板的变量
      * @return mixed
      */
-    function view(?string $template = '', array $params = [])
+    function view(?string $template = null, array $params = [])
     {
         return \Yao\Facade\View::render($template, $params);
     }
