@@ -202,7 +202,7 @@ class Route
      * 路由允许跨域设置
      * @param string $allowOrigin
      * 允许跨域域名
-     * @param bool $allowCredentials
+     * @param string $allowCredentials
      * 是否可以将对请求的响应暴露给页面
      * @param string $allowHeaders
      * 允许的头信息
@@ -212,7 +212,7 @@ class Route
      * 请求方法
      * @return $this
      */
-    public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'GET,POST,PUT,DELETE,PATCH'): Route
+    public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'GET,POST,PUT,DELETE,PATCH'): Route
     {
         foreach ((array)$this->method as $method) {
             if ($method == $this->request->method() && ($this->path == $this->request->path() || preg_match("#^{$this->path}$#iU", $this->request->path()))) {
