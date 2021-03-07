@@ -216,7 +216,7 @@ class Route
     public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'get,post,put'): Route
     {
         foreach ((array)$this->method as $method) {
-            if ($method == $this->request->method() && preg_match("#^{$this->path}$#iU", $this->request->path())) {
+            if ($method == $this->request->method() && ($this->path == $this->request->path() || preg_match("#^{$this->path}$#iU", $this->request->path()))) {
                 //布尔被自动转为1了
                 $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . $method, 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
             }
