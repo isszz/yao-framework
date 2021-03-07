@@ -217,7 +217,7 @@ class Route
      * 请求方法
      * @return $this
      */
-    public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $methods = 'GET,POST,PUT,DELETE,PATCH,OPTIONS'): Route
+    public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600): Route
     {
         if ($this->request->path() == $this->path || preg_match("#^{$this->path}$#iU", $this->request->path())) {
             $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . strtoupper($this->request->method()), 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
