@@ -58,7 +58,7 @@ class Session
     public function destroy()
     {
         $_SESSION = [];
-        setcookie(session_name(), null, -1);
+        setcookie(session_name(), '', -1);
         session_destroy();
     }
 
