@@ -141,10 +141,10 @@ class Error
                     $function = $trace[$key]['function'];
                     echo '<p style="background-color: #65adf3;color: white">' . $errorFile . ' +' . $line . '</p>';
                     for ($i = $line - 4; $i < $line + 3 && $i < count($file); $i++) {
-                        $code = $file[$i];
+                        $code = htmlspecialchars($file[$i]);
                         echo '<span style="background-color: #EEEEEE;color: grey">' . str_pad((string)($i + 1), 3, ' ', STR_PAD_BOTH) . '</span>';
                         if ($i + 1 == $line) {
-                            $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', $file[$i]) . '</text>';
+                            $code = '<text style="width:100%;background-color: #eeeeee">' . str_replace($function, '<span style="color: red">' . $function . '</span>', htmlspecialchars($file[$i])) . '</text>';
                         }
                         echo $code;
                     }
