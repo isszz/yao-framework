@@ -182,7 +182,11 @@ class Route
      */
     public function middleware($middleware)
     {
-        $this->app['middleware']->setRouteMiddlewares($this->method, $this->path, $middleware);
+        foreach ((array)$this->method as $method) {
+            if ($method == $this->request->method() && ($this->path == $this->request->path() || preg_match("#^{$this->path}$#iU", $this->request->path()))) {
+                $this->app['middleware']->setRouteMiddlewares($middleware);
+            }
+        }
         return $this;
     }
 
@@ -216,7 +220,6 @@ class Route
     {
         foreach ((array)$this->method as $method) {
             if ($method == $this->request->method() && ($this->path == $this->request->path() || preg_match("#^{$this->path}$#iU", $this->request->path()))) {
-                //布尔被自动转为1了
                 $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . $method, 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
             }
         }

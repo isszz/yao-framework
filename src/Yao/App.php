@@ -69,12 +69,15 @@ class App extends Container
         $this->bind = array_merge((array)$this->config->get('app.alias'), $this->bind);
         //注册路由
         $this['route']->register();
-        //发送响应,如果全局中间件不起作用可以给data中的参数改成闭包
+        //发送响应
         return $this->response
             ->data($this['middleware']->make($this->route->dispatch(), 'global'))
             ->send();
     }
 
+    /**
+     * 这个不知道有没有必要
+     */
     public function __destruct()
     {
         static::$instances = [];

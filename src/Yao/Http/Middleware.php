@@ -29,11 +29,9 @@ class Middleware
         $this->app = $app;
     }
 
-    public function setRouteMiddlewares($method, $path, $middleware)
+    public function setRouteMiddlewares($middleware)
     {
-        foreach ((array)$method as $m) {
-            $this->route[$method][$path] = $middleware;
-        }
+        $this->route = (array)$middleware;
     }
 
     public function setControllerMiddlewares(array $middleware)
@@ -41,9 +39,9 @@ class Middleware
         $this->controller = $middleware;
     }
 
-    public function getRoute($method, $path)
+    public function getRoute()
     {
-        return $this->route[$method][$path] ?? [];
+        return $this->route;
     }
 
     public function getController()
@@ -73,7 +71,7 @@ class Middleware
         $middlewares = [];
         switch ($type) {
             case 'route':
-                $middlewares = (array)$this->getRoute($this->app->request->method(), $this->app->request->path());
+                $middlewares = (array)$this->getRoute();
                 break;
             case 'controller':
                 $middlewares = $this->getController();
