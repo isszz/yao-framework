@@ -61,6 +61,13 @@ class Middleware
         return $middlewares;
     }
 
+    /**
+     * 需要用pipeline模式重写
+     * @param $request
+     * @param $type
+     * @return \Closure
+     * @throws \Exception
+     */
     public function make($request, $type)
     {
         $middlewares = [];
@@ -79,27 +86,14 @@ class Middleware
         }
         if (!empty($middlewares)) {
             foreach ($middlewares as $middleware) {
-                $request = $this->app->invokeMethod([$middleware, 'handle'], [$request, function ($request) {
-                    return $request;
-                }], false);
+                $request = function () use ($middleware, $request) {
+                    return $this->app->invokeMethod([$middleware, 'handle'], [$request, function ($request) {
+                        return $request();
+                    }], false);
+                };
             }
         }
         return $request;
     }
-
-//    public function pipeline($array, $request)
-//    {
-//        static $return;
-//        if (!empty($array)) {
-//            $middleware = array_shift($array);
-//            $return = function () use ($request, $middleware) {
-//                return (new $middleware())->handle($request, function ($request) {
-//                    return $request;
-//                });
-//            };
-//            return $this->pipeline($array, $return);
-//        }
-//        return $return;
-//    }
 
 }
