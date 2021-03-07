@@ -38,22 +38,20 @@ class Cors
         //正则路由不起作用
         if ($this->request->isMethod('options')) {
             return $this->response
-                ->header($this->cors[$this->request->method()][$this->request->path()])
+                ->header($this->cors)
                 ->code(204)
                 ->send();
         }
-        if (isset($this->cors[$this->request->method()][$this->request->path()])) {
+        if (!empty($this->cors)) {
             return $this->response
-                ->header($this->cors[$this->request->method()][$this->request->path()]);
+                ->header($this->cors);
         }
     }
 
 
-    public function set($methods, $path, $options)
+    public function set($options)
     {
-        foreach ((array)$methods as $method) {
-            $this->cors[$method][$path] = $options;
-        }
+        $this->cors = $options;
     }
 
 }

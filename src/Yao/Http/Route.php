@@ -199,21 +199,28 @@ class Route
         return $this;
     }
 
-
     /**
      * 路由允许跨域设置
-     * @param null $AllowOrigin
+     * @param string $allowOrigin
      * 允许跨域域名
-     * @param null $AllowCredentials
+     * @param bool $allowCredentials
      * 是否可以将对请求的响应暴露给页面
-     * @param null $AllowHeaders
+     * @param string $allowHeaders
      * 允许的头信息
+     * @param int $allowAge
+     * 缓存预检时间
+     * @param string $method
+     * 请求方法
      * @return $this
      */
     public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'get,post,put'): Route
     {
-        //布尔被自动转为1了
-        $this->app[Cors::class]->set($this->method, $this->path, ['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . $method, 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
+        foreach ((array)$this->method as $method) {
+            if ($method == $this->request->method() && preg_match("#^{$this->path}$#iU", $this->request->path())) {
+                //布尔被自动转为1了
+                $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . $method, 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
+            }
+        }
         return $this;
     }
 
