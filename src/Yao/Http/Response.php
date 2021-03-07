@@ -77,10 +77,11 @@ class Response
 
     /**
      * 设置响应头
-     * @param null|string|array $header
+     * @param string|array $header
+     * 头信息
      * @return $this
      */
-    public function header($header = null)
+    public function header($header)
     {
         $this->header = [...$this->header, ...(array)$header];
         return $this;
@@ -97,6 +98,7 @@ class Response
         http_response_code($this->code);
         echo $this->data;
         ob_end_flush();
+        exit;
     }
 
     public function __destruct()

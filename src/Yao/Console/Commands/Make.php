@@ -5,23 +5,25 @@ namespace Yao\Console\Commands;
 class Make
 {
 
-    private $optionsMap = [
+    private array $optionsMap = [
         1 => 'controller',
-        2 => 'model'
+        2 => 'model',
+        3 => 'middleware'
     ];
 
     public function out()
     {
         echo <<<EOT
-(1). 生成控制器
-(2). 生成模型
+(1). 控制器
+(2). 模型
+(3). 中间件
 输入要生成的文件<1,2,3>：
 EOT;
         fscanf(STDIN, '%d', $options);
-        if (!array_key_exists($options, $this->optionsMap)) {
-            return $this->out();
+        if (array_key_exists($options, $this->optionsMap)) {
+            return call_user_func([$this, $this->optionsMap[$options]]);
         }
-        return call_user_func([$this, $this->optionsMap[$options]]);
+        return $this->out();
     }
 
     public function controller()
@@ -64,6 +66,11 @@ EOT;
 
 
     public function model()
+    {
+        exit("暂时不支持!\n");
+    }
+
+    public function middleware()
     {
         exit("暂时不支持!\n");
     }
