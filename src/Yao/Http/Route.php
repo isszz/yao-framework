@@ -217,11 +217,20 @@ class Route
      * 请求方法
      * @return $this
      */
-    public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600): Route
+    public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $maxAge = 600): Route
     {
         if ($this->request->path() == $this->path || preg_match("#^{$this->path}$#iU", $this->request->path())) {
-            $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . strtoupper($this->request->method()), 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $allowAge]);
-            $this->app[Cors::class]->allow();
+            $this->app[Cors::class]
+                ->setOrigin($allowOrigin)
+                ->setAllowHeaders($allowHeaders)
+                ->setCredentials($allowCredentials)
+                ->setMaxAge($maxAge)
+                ->setAllowMethod($this->request->method())
+                ->allow();
+
+
+//            $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . strtoupper($this->request->method()), 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $maxAge]);
+//            $this->app[Cors::class]->allow();
         }
         return $this;
     }

@@ -21,6 +21,14 @@ class Cors
 
     protected Response $response;
 
+    protected $origin;
+
+    protected $allowCredentials;
+
+    protected $allowHeaders;
+
+    protected $maxAge;
+
     protected array $cors = [];
 
     protected array $defaultRule = [];
@@ -30,24 +38,45 @@ class Cors
         $this->app = $app;
         $this->request = $app['request'];
         $this->response = $app['response'];
-        $this->defaultRule = $app->config->get('cors');
     }
 
     public function allow()
     {
-        if (!empty($this->cors)) {
-            $response = $this->response->header($this->cors);
-            if ($this->request->isMethod('options')) {
-                return $response->code(204)->send();
-            }
-            return $response;
+        if ($this->request->isMethod('options')) {
+            return $response->code(204)->send();
         }
     }
 
-
-    public function set($options)
+    public function setOrigin($origin)
     {
-        $this->cors = $options;
+        if ('*' == $origin || in_array($origin = $this->request->header('origin'), (array)$origin)) {
+            $this->response->header('Access-Control-Allow-Origin:' . $origin);
+        }
+        return $this;
+    }
+
+    public function setAllowHeaders($allowHeaders)
+    {
+        $this->response->header('Access-Control-Allow-Headers:' . $allowHeaders);
+        return $this;
+    }
+
+    public function setCredentials($allowCredentials)
+    {
+        $this->response->header('Access-Control-Allow-Credentials:' . $allowCredentials);
+        return $this;
+    }
+
+    public function setAllowMethod(string $method)
+    {
+        $this->response->header('Access-Control-Allow-Methods:' . strtoupper($method));
+        return $this;
+    }
+
+    public function setMaxAge(int $maxAge)
+    {
+        $this->response->header('Access-Control-Max-Age:' . $maxAge);
+        return $this;
     }
 
 }
