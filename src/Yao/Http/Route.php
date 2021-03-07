@@ -213,8 +213,6 @@ class Route
      * 允许的头信息
      * @param int $allowAge
      * 缓存预检时间
-     * @param string $method
-     * 请求方法
      * @return $this
      */
     public function cors($allowOrigin = '*', string $allowCredentials = 'true', string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $maxAge = 600): Route
