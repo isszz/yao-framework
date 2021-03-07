@@ -21,18 +21,6 @@ class Cors
 
     protected Response $response;
 
-    protected $origin;
-
-    protected $allowCredentials;
-
-    protected $allowHeaders;
-
-    protected $maxAge;
-
-    protected array $cors = [];
-
-    protected array $defaultRule = [];
-
     public function __construct(App $app)
     {
         $this->app = $app;

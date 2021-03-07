@@ -227,10 +227,6 @@ class Route
                 ->setMaxAge($maxAge)
                 ->setAllowMethod($this->request->method())
                 ->allow();
-
-
-//            $this->app[Cors::class]->set(['Access-Control-Allow-Origin:' . $allowOrigin, 'Access-Control-Allow-Methods:' . strtoupper($this->request->method()), 'Access-Control-Allow-Credentials:' . $allowCredentials, 'Access-Control-Allow-Headers:' . $allowHeaders, 'Access-Control-Max-Age:' . $maxAge]);
-//            $this->app[Cors::class]->allow();
         }
         return $this;
     }
