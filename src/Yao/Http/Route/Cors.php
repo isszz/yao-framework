@@ -35,15 +35,12 @@ class Cors
 
     public function allow()
     {
-        if ($this->request->isMethod('options')) {
-            return $this->response
-                ->header($this->cors)
-                ->code(204)
-                ->send();
-        }
         if (!empty($this->cors)) {
-            return $this->response
-                ->header($this->cors);
+            $response = $this->response->header($this->cors);
+            if ($this->request->isMethod('options')) {
+                return $response->code(204)->send();
+            }
+            return $response;
         }
     }
 
