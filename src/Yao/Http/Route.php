@@ -177,7 +177,8 @@ class Route
 
     /**
      * 路由中间件注册方法
-     * @param $middleware
+     * @param string|array $middleware
+     * 中间件完整类名字符串或者索引数组
      * @return $this
      */
     public function middleware($middleware)
@@ -192,7 +193,7 @@ class Route
 
     /**
      * 路由别名设置
-     * @param $name
+     * @param string $name
      * 路由别名
      * @return $this
      */
