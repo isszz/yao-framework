@@ -35,7 +35,6 @@ class Cors
 
     public function allow()
     {
-        //正则路由不起作用
         if ($this->request->isMethod('options')) {
             return $this->response
                 ->header($this->cors)
