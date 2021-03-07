@@ -37,8 +37,10 @@ class Cors
 
     public function setOrigin($origin)
     {
-        if ('*' == $origin || in_array($origin = $this->request->header('origin'), (array)$origin)) {
-            $this->response->header('Access-Control-Allow-Origin:' . $origin);
+        if ('*' == $origin) {
+            $this->response->header('Access-Control-Allow-Origin: *');
+        } else if (in_array($allowOrigin = $this->request->header('origin'), (array)$origin)) {
+            $this->response->header('Access-Control-Allow-Origin:' . $allowOrigin);
         }
         return $this;
     }

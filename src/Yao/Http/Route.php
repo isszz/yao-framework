@@ -205,7 +205,7 @@ class Route
 
     /**
      * 路由允许跨域设置
-     * @param string $allowOrigin
+     * @param string|array $allowOrigin
      * 允许跨域域名
      * @param string $allowCredentials
      * 是否可以将对请求的响应暴露给页面
