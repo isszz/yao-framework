@@ -219,7 +219,7 @@ class Route
     {
         if ($this->request->path() == $this->path || preg_match("#^{$this->path}$#iU", $this->request->path())) {
             $this->app[Cors::class]
-                ->setOrigin($allowOrigin)
+                ->setAllowOrigin($allowOrigin)
                 ->setAllowHeaders($allowHeaders)
                 ->setCredentials($allowCredentials)
                 ->setMaxAge($maxAge)

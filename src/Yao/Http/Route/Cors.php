@@ -31,11 +31,11 @@ class Cors
     public function allow()
     {
         if ($this->request->isMethod('options')) {
-            return $response->code(204)->send();
+            return $this->response->code(204)->send();
         }
     }
 
-    public function setOrigin($origin)
+    public function setAllowOrigin($origin)
     {
         if ('*' == $origin) {
             $this->response->header('Access-Control-Allow-Origin: *');
