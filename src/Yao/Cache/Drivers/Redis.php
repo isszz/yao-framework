@@ -14,13 +14,11 @@ class Redis extends Driver
 
     protected \Redis $redis;
 
-    public function __construct($config)
+    public function __construct($config, \Redis $redis)
     {
-        $this->redis = new \Redis();
+        $this->redis = $redis;
         $this->redis->connect($config['host'] ?? 'localhost', $config['port'] ?? 6379, $config['timeout'] ?? 10);
-        if ($config['auth']) {
-            $this->redis->auth($config['auth']);
-        }
+        isset($config['auth']) && $this->redis->auth($config['auth']);
     }
 
     /**

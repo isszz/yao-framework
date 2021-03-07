@@ -12,4 +12,27 @@ use Yao\Cache\Driver;
 class Memcached extends Driver
 {
 
+    private \Memcached $memcached;
+
+    public function __construct($config, \Memcached $memcached)
+    {
+        $this->memcached = $memcached;
+        $this->memcached->addServer($config['host'] ?? 'localhost', $config['post'] ?? 11211);
+    }
+
+    public function get(string $key)
+    {
+        return $this->memcached->get($key);
+    }
+
+    public function set(string $key, $value)
+    {
+        return $this->memcached->set($key, $value);
+    }
+
+    public function has(string $key)
+    {
+    }
+
+
 }
