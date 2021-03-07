@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Yao\Http;
@@ -213,7 +212,7 @@ class Route
      * 请求方法
      * @return $this
      */
-    public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'get,post,put'): Route
+    public function cors($allowOrigin = '*', bool $allowCredentials = true, string $allowHeaders = 'Origin,Content-Type,Accept,token,X-Requested-With', int $allowAge = 600, $method = 'GET,POST,PUT,DELETE,PATCH'): Route
     {
         foreach ((array)$this->method as $method) {
             if ($method == $this->request->method() && ($this->path == $this->request->path() || preg_match("#^{$this->path}$#iU", $this->request->path()))) {

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Yao;
@@ -74,5 +73,10 @@ class App extends Container
         return $this->response
             ->data($this['middleware']->make($this->route->dispatch(), 'global'))
             ->send();
+    }
+
+    public function __destruct()
+    {
+        static::$instances = [];
     }
 }

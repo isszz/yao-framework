@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Yao\Http;
-
 
 use Yao\App;
 
