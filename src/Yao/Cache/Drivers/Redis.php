@@ -17,7 +17,7 @@ class Redis extends Driver
     public function __construct($config)
     {
         $this->redis = new \Redis();
-        $this->redis->connect($config['host'], $config['port'], $config['timeout']);
+        $this->redis->connect($config['host'] ?? 'localhost', $config['port'] ?? 6379, $config['timeout'] ?? 10);
         if ($config['auth']) {
             $this->redis->auth($config['auth']);
         }
@@ -39,5 +39,10 @@ class Redis extends Driver
     public function get(string $key)
     {
         return $this->redis->get($key);
+    }
+
+    public function has(string $key)
+    {
+        return $this->redis->exists($key);
     }
 }
