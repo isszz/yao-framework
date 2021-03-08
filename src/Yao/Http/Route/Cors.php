@@ -21,6 +21,8 @@ class Cors
 
     protected Response $response;
 
+    protected array $cors = [];
+
     public function __construct(App $app)
     {
         $this->app = $app;
@@ -28,44 +30,58 @@ class Cors
         $this->response = $app['response'];
     }
 
+    public function setHeader($header,$value){
+        $this->cors[$header] = $value;
+    }
+
+
+    public function hasHeader($header){
+        return array_key_exists($header,$this->cors);
+    }
+
     public function allow()
     {
-        if ($this->request->isMethod('options')) {
-            return $this->response->code(204)->send();
+        if($this->hasHeader('Access-Control-Allow-Origin')){
+            foreach($this->cors as $header => $value){
+                $this->response->header($header. ':'. $value);
+            }
+            if ($this->request->isMethod('options')) {
+                return $this->response->code(204)->send();
+            }
         }
     }
 
     public function setAllowOrigin($origin)
     {
         if ('*' == $origin) {
-            $this->response->header('Access-Control-Allow-Origin: *');
+            $this->setHeader('Access-Control-Allow-Origin','*');
         } else if (in_array($allowOrigin = $this->request->header('origin'), (array)$origin)) {
-            $this->response->header('Access-Control-Allow-Origin:' . $allowOrigin);
+            $this->setHeader('Access-Control-Allow-Origin',$allowOrigin);
         }
         return $this;
     }
 
     public function setAllowHeaders($allowHeaders)
     {
-        $this->response->header('Access-Control-Allow-Headers:' . $allowHeaders);
+        $this->setHeader('Access-Control-Allow-Headers',$allowHeaders);
         return $this;
     }
 
     public function setCredentials($allowCredentials)
     {
-        $this->response->header('Access-Control-Allow-Credentials:' . $allowCredentials);
+        $this->setHeader('Access-Control-Allow-Credentials',$allowCredentials);
         return $this;
     }
 
     public function setAllowMethod(string $method)
     {
-        $this->response->header('Access-Control-Allow-Methods:' . strtoupper($method));
+        $this->setHeader('Access-Control-Allow-Methods',strtoupper($method));
         return $this;
     }
 
     public function setMaxAge(int $maxAge)
     {
-        $this->response->header('Access-Control-Max-Age:' . $maxAge);
+        $this->setHeader('Access-Control-Max-Age:',$maxAge);
         return $this;
     }
 
