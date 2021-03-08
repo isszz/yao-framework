@@ -16,22 +16,25 @@ class Redis extends Driver
     
     protected int $retryTimes = 0;
 
+    protected int $retry = 2;
+
     public function __construct($config, \Redis $redis)
     {
         $this->redis = $redis;
-        $this->connect();
+        $this->retry = $config['retry'] ?? 2;
+        $this->connect($config);
         isset($config['auth']) && $this->redis->auth($config['auth']);
     }
 
-    public function connect(){
+    public function connect($config){
         $this->retryTimes++;
         try{
             $this->redis->connect($config['host'] ?? '127.0.0.1', $config['port'] ?? 6379, $config['timeout'] ?? 5);
         }catch (\Exception $e){
-            if(3 == $this->retryTimes){
-                throw new \Exception('Conection failed for 3 times');
+            if($this->retry == $this->retryTimes){
+                throw new \Exception("Conection failed for {$this->retry} times");
             }
-            return $this->connect();
+            return $this->connect($config);
         }
     }
     
