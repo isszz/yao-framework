@@ -17,7 +17,7 @@ class Memcached extends Driver
     public function __construct($config, \Memcached $memcached)
     {
         $this->memcached = $memcached;
-        $this->memcached->addServer($config['host'] ?? 'localhost', $config['post'] ?? 11211);
+        $this->memcached->addServer($config['host'] ?? '127.0.0.1', $config['post'] ?? 11211);
     }
 
     public function get(string $key)
