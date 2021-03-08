@@ -409,25 +409,21 @@ abstract class Driver
         return implode(' ', array_filter($this->construction));
     }
 
-
-
-    // public function transaction(array $transaction)
-    // {
-    //     $this->pdo->setAttribute(\PDO::ATTR_AUTOCOMMIT, 0);
-    //     try {
-    //         $this->pdo->beginTransaction(); //开启事务
-    //         foreach (func_get_args() as $key => $sql) {
-    //             $this->pdo->exec($sql);
-    //         }
-    //         $this->pdo->commit();
-    //     } catch (\PDOException $e) {
-    //         $this->pdo->rollback();
-    //         $this->message = $e->getMessage();
-    //         return FALSE;
-    //     }
-    //     $this->pdo->setAttribute(\PDO::ATTR_AUTOCOMMIT, 1);
-    //     return TRUE;
-    // }
+    
+    public function transaction(\Closure $transaction)
+    {
+        try {
+            $this->pdo->setAttribute(\PDO::ATTR_AUTOCOMMIT, 0);
+            $this->pdo->beginTransaction();
+            $result = $transaction();
+            $this->pdo->commit();
+            $this->pdo->setAttribute(\PDO::ATTR_AUTOCOMMIT, 1);
+        } catch (\PDOException $e) {
+            $this->pdo->rollback();
+            throw new \Exception($e);
+        }
+        return $result;
+    }
 
 
 }
